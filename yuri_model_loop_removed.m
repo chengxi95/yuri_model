@@ -1,7 +1,7 @@
 
 close all;
 clear all;
-% rng("default");
+rng("default");
 % this code simulate two populations of cortical cells (aPFC and pPFC superficial and deep layers)  and three population of thalamic cells (aPFC core, pPFC core and Matrix cells)during a working memory task.
 % our assumption is that thalamus increases the
 % cortico-cortical connectivity gain by a coefiecint an amplification
@@ -502,49 +502,9 @@ for rr= 1
         %
         %         IPL Inh neurons to excitatory
 
-        % Isyn_SNpr_to_VA(:, i+ delay) =  Isyn_SNpr_to_VA(:, i+ delay) + W_IPL_Inh_to_exc.*sum(((i-last_spike_SNpr_Inh < spikewidth_inh) & (i-last_spike_SNpr_Inh > 0)).*(exp((1-(i-last_spike_SNpr_Inh-delay))*2./spikewidth_inh)), 1);
-
-        
-        %         %
-        %current to PV cell
-        % for jj=1:numberofneurons
-        %     for kk=1:numberofneurons
-        %         if (i-last_spike_MD2_core(kk))<(spikewidth_MD) && (i-last_spike_MD2_core(kk))> 0  % inserting delay && (i-last_spike_PFC(kk))>4
-        %             Isyn_MD_to_inh_PV(jj,i+delay)= Isyn_MD_to_inh_PV(jj,i+delay)+ Matrix_MD_to_PV(kk, jj);
-        %         end
-        %     end
-        % end
-        %
-        % Isyn_SNpr_to_VA(:, i + delay) =  Isyn_SNpr_to_VA(:, i + delay) + W_IPL_Inh_to_exc.*sum(((i-last_spike_SNpr_Inh < spikewidth_inh) & (i-last_spike_SNpr_Inh > 0)).*(exp((1-(i-last_spike_SNpr_Inh-delay)).*2./spikewidth_inh)), 1);
-        % Isyn_ST(:, i + delay) =  Isyn_ST(:, i + delay) + W_IPL_Inh_to_exc.*sum(((i-last_spike_ST < spikewidth_inh) & (i-last_spike_ST > 0)).*(exp((1-(i-last_spike_ST-delay)).*2./spikewidth_inh)), 1);
-        % Isyn_PV(:, i + delay) =  Isyn_PV(:, i + delay) + W_IPL_Inh_to_exc.*sum(((i-last_spike_PV < spikewidth_inh) & (i-last_spike_PV > 0)).*(exp((1-(i-last_spike_PV-delay)).*2./spikewidth_inh)), 1);
-
-        for jj=1:numberofneurons
-            for kk=1:numberofneurons
-                if (i-last_spike_SNpr_Inh(kk))<(spikewidth_inh) && (i-last_spike_SNpr_Inh(kk))> 0  % inserting delay && (i-last_spike_PFC(kk))>4
-                     % no error 
-                    Isyn_SNpr_to_VA(jj,i+delay)= Isyn_SNpr_to_VA(jj,i+delay)+ W_IPL_Inh_to_exc*exp((1-(i-last_spike_SNpr_Inh(kk)-delay))*2./spikewidth_inh);%$$$$$$$$$$$$$&&&&&&&&&&&&&&&&&FIX the exponent
-                end
-            end
-        end
-
-        for jj=1:numberofneurons
-            for kk=1:numberofneurons
-                if (i-last_spike_ST(kk))<(spikewidth_inh) && (i-last_spike_ST(kk))> 0  % inserting delay && (i-last_spike_PFC(kk))>4
-                    Isyn_ST(jj,i+delay)= Isyn_ST(jj,i+delay)+ W_IPL_Inh_to_exc*exp((1-(i-last_spike_ST(kk)-delay))*2./spikewidth_inh);%$$$$$$$$$$$$$&&&&&&&&&&&&&&&&&FIX the exponent
-                end
-            end
-        end
-
-
-
-        for jj=1:numberofneurons
-            for kk=1:numberofneurons
-                if (i-last_spike_PV(kk))<(spikewidth_inh) && (i-last_spike_PV(kk))> 0  % inserting delay && (i-last_spike_PFC(kk))>4
-                    Isyn_PV(jj,i+delay)= Isyn_PV(jj,i+delay)+ W_IPL_Inh_to_exc*exp((1-(i-last_spike_PV(kk)-delay))*2./spikewidth_inh);%$$$$$$$$$$$$$&&&&&&&&&&&&&&&&&FIX the exponent
-                end
-            end
-        end
+        Isyn_SNpr_to_VA(:, i + delay) =  Isyn_SNpr_to_VA(:, i + delay) + W_IPL_Inh_to_exc.*sum(((i-last_spike_SNpr_Inh < spikewidth_inh) & (i-last_spike_SNpr_Inh > 0)).*(exp(((i-last_spike_SNpr_Inh < spikewidth_inh) & (i-last_spike_SNpr_Inh > 0)).*(1-(i-last_spike_SNpr_Inh-delay)).*2./spikewidth_inh)), 1);
+        Isyn_ST(:, i + delay) =  Isyn_ST(:, i + delay) + W_IPL_Inh_to_exc.*sum(((i-last_spike_ST < spikewidth_inh) & (i-last_spike_ST > 0)).*(exp(((i-last_spike_ST < spikewidth_inh) & (i-last_spike_ST > 0)).*(1-(i-last_spike_ST-delay)).*2./spikewidth_inh)), 1);
+        Isyn_PV(:, i + delay) =  Isyn_PV(:, i + delay) + W_IPL_Inh_to_exc.*sum(((i-last_spike_PV < spikewidth_inh) & (i-last_spike_PV > 0)).*(exp(((i-last_spike_PV < spikewidth_inh) & (i-last_spike_PV > 0)).*(1-(i-last_spike_PV-delay)).*2./spikewidth_inh)), 1);
 
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
