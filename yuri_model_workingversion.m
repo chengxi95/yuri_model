@@ -644,7 +644,7 @@ for rr= 1
         for jj=1:numberofneurons
             for kk=1:numberofneurons
                 if (i-last_spike_aPFC_D_YT(kk))<(spikewidth) && (i-last_spike_aPFC_D_YT(kk))> 0 
-                    if PFC_VA_matrix(kk,jj)~=0
+                    if matrix_M(kk,jj)~=0
                         Isyn_PFC_D_MD_ori(jj,i+ delay)= Isyn_PFC_D_MD_ori(jj,i+ delay) + W_PFC_MD;
                     end
                 end
@@ -654,7 +654,7 @@ for rr= 1
         for jj=1:numberofneurons
             for kk=1:numberofneurons
                 if (i-last_spike_aPFC_D_GC(kk))<(spikewidth) && (i-last_spike_aPFC_D_GC(kk))> 0 
-                    if PFC_VA_matrix(kk,jj)~=0
+                    if matrix_M(kk,jj)~=0
                         Isyn_PFC_D_MD_ori(jj,i+ delay)= Isyn_PFC_D_MD_ori(jj,i+ delay) + W_PFC_MD;
                     end
                 end
