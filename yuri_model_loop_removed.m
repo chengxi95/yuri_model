@@ -1,6 +1,6 @@
 close all;
 clear all;
-% rng("default");
+rng("default");
 % this code simulate two populations of cortical cells (aPFC and pPFC superficial and deep layers)  and three population of thalamic cells (aPFC core, pPFC core and Matrix cells)during a working memory task.
 % our assumption is that thalamus increases the
 % cortico-cortical connectivity gain by a coefiecint an amplification
@@ -1276,14 +1276,14 @@ figure(13)
 srate=1000;
 gauss_width= 100;
 st= 10000;
-firing_rate_timeseries= get_firing_num(y_pPFC_Shape, 5000, v_th);
+firing_rate_timeseries= get_firing_num(y_pPFC_Shape, gauss_width, v_th);
 firing_rate_timeseries=  conv_gaussian(firing_rate_timeseries, srate,gauss_width);
 
 
 plot(firing_rate_timeseries, 'b'), xlim([st, 450000])
 
 firing_rate_timeseries=[];
-firing_rate_timeseries= get_firing_num(y_VA_matrix_shape, 5000, v_th);
+firing_rate_timeseries= get_firing_num(y_VA_matrix_shape, gauss_width, v_th);
 firing_rate_timeseries=  conv_gaussian(firing_rate_timeseries, srate,gauss_width);
 
 hold on
@@ -1291,9 +1291,10 @@ hold on
 plot(firing_rate_timeseries, 'k'), xlim([st, 450000])
 
 firing_rate_timeseries=[];
-firing_rate_timeseries= get_firing_num(y_MD_core_shape, 5000, v_th);
+firing_rate_timeseries= get_firing_num(y_MD_core_shape, gauss_width, v_th);
 firing_rate_timeseries=  conv_gaussian(firing_rate_timeseries, srate,gauss_width);
 
 hold on
 
 plot(firing_rate_timeseries, 'r'), xlim([st, 450000])
+
