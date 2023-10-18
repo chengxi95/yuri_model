@@ -16,13 +16,18 @@ numberofneurons = 50;% number of neurons per group
 randomness = 1; % control the randoness of the experiment
 
 % total number of trials
-total_trial_num = 5;
+total_trial_num = 1;
 
 PFCD_VA_factor = 2.6;
 PFCD_MD_factor = 5;
 VA_pPFC_factor = 1;
 MD_pPFC_factor = 2;
 pPFC_MD_factor = 2;
+
+% legion test
+VA_off = 0;
+MD_off = 0;
+pPFC_off = 0;
 
 %   Time constants
 tha = 20; %time constant
@@ -880,6 +885,10 @@ for trial_num = 1:total_trial_num
     
                 if y_VA_matrix_shape(j,i)>=v_th
                     last_spike_VA_matrix_shape(j)=i;
+
+                    if VA_off
+                        last_spike_VA_matrix_shape(j) = 10^10;
+                    end
                     y_VA_matrix_shape(j,i)=0;
                     spiketimes_VA=[spiketimes_VA;i,j];
     
@@ -911,6 +920,11 @@ for trial_num = 1:total_trial_num
     
                 if y_VA_matrix_Orientation (j,i)>=v_th
                     last_spike_VA_matrix_Orientation(j)=i;
+
+                    if VA_off
+                        last_spike_VA_matrix_Orientation(j) = 10^10;
+                    end
+
                     y_VA_matrix_Orientation (j,i)=0;
                     spiketimes_VA_shape=[spiketimes_VA_shape;i,j];
     
@@ -943,6 +957,11 @@ for trial_num = 1:total_trial_num
     
                 if y_MD_core_shape(j,i) >= v_th
                     last_spike_MD_shape(j)=i;
+
+                    if MD_off
+                        last_spike_MD_shape(j) = 10^10;
+                    end
+
                     y_MD_core_shape(j,i) = 0;
                     spiketimes_MD2=[spiketimes_MD2;i,j];
     
@@ -977,6 +996,11 @@ for trial_num = 1:total_trial_num
     
                 if y_MD_core_ori(j,i)>=v_th
                     last_spike_MD_ori(j)=i;
+
+                    if MD_off
+                        last_spike_MD_ori(j) = 10^10;
+                    end
+
                     y_MD_core_ori(j,i)=0;
                     spiketimes_MD=[spiketimes_MD;i,j];
     
@@ -1062,6 +1086,11 @@ for trial_num = 1:total_trial_num
     
                 if y_pPFC_Shape(j,i)>=v_th
                     last_spike_pPFC_remote_shape(j)=i;
+
+                    if pPFC_off
+                        last_spike_pPFC_remote_shape(j)=10^10;
+                    end
+
                     y_pPFC_Shape(j,i)=0;
                     spiketimes_S_remote_Shape=[spiketimes_S_remote_Shape;i,j];
     
@@ -1092,6 +1121,11 @@ for trial_num = 1:total_trial_num
     
                 if y_pPFC_Orientation(j,i)>=v_th
                     last_spike_pPFC_remote_Orientation(j)=i;
+
+                    if pPFC_off
+                        last_spike_pPFC_remote_Orientation(j)=10^10;
+                    end
+
                     y_pPFC_Orientation(j,i)=0;
                     spiketimes_S_remote_Orientation=[spiketimes_S_remote_Orientation;i,j];
     
