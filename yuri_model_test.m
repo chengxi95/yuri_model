@@ -1304,6 +1304,11 @@ subplot(6,1,6)
 spy( y_MD_core_ori>-50,8,'k'),title('MD ori (one trial)', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
+
+%%
+hold on
+get_target_neuron_id(y_pPFC_Shape>-50)
+
 %%
 close all
 srate=1000;
