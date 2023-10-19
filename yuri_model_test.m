@@ -16,16 +16,16 @@ numberofneurons = 50;% number of neurons per group
 randomness = 1; % control the randoness of the experiment
 
 % total number of trials
-total_trial_num = 1;
+total_trial_num = 20;
 
 PFCD_VA_factor = 2.6;
-PFCD_MD_factor = 5;
+PFCD_MD_factor = 0.3;
 VA_pPFC_factor = 1;
-MD_pPFC_factor = 2;
-pPFC_MD_factor = 2;
+MD_pPFC_factor = 4;
+pPFC_MD_factor = 16;
 
 % legion test
-VA_off = 0;
+VA_off = 1;
 MD_off = 0;
 pPFC_off = 0;
 
@@ -1205,10 +1205,14 @@ for trial_num = 1:total_trial_num
         full_PFC_remote_shape(trial_num, :) = y_pPFC_Shape(1, :) > v_th;
         full_PFC_remote_ori(trial_num, :) = y_pPFC_Orientation(1, :) > v_th;
         
-        % movsum in get_firing_num keeps the dimenstion same
-        full_VA_shape_num(trial_num, :) =  get_firing_num(y_VA_matrix_shape, gauss_width, v_th);
-        full_MD_shape_num(trial_num, :) = get_firing_num(y_MD_core_shape, gauss_width, v_th);
-        full_PFC_remote_shape_num(trial_num, :) = get_firing_num(y_pPFC_Shape, gauss_width, v_th);
+        VA_neuron_index = get_target_neuron_idex(y_VA_matrix_shape>v_th);
+        MD_neuron_index = get_target_neuron_idex(y_MD_core_shape>v_th);
+        pPFC_neuron_index = get_target_neuron_idex(y_pPFC_Shape>v_th);
+
+        % only select target neuron set, movsum in get_firing_num keeps the dimenstion same 
+        full_VA_shape_num(trial_num, :) =  get_firing_num(y_VA_matrix_shape(VA_neuron_index, :) > v_th, gauss_width);
+        full_MD_shape_num(trial_num, :) = get_firing_num(y_MD_core_shape(MD_neuron_index, :) > v_th, gauss_width);
+        full_PFC_remote_shape_num(trial_num, :) = get_firing_num(y_pPFC_Shape(pPFC_neuron_index, :) > v_th, gauss_width);
 
 
     % LFP_aPFC_S(rr,:)= smooth(mean(Isyn_aPFC_local_effective)+ mean(Isyn_pPFC_Remote_to_aPFC_effective)+ mean(I_noise_PFC_1));% %%% !!!!!!!!!!!!!!!! add noise
@@ -1304,10 +1308,32 @@ subplot(6,1,6)
 spy( y_MD_core_ori>-50,8,'k'),title('MD ori (one trial)', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
+figure(5)
+srate=1000;
+st= 10000;
+final=250000;
+
+average_VA_shape_num = sum(full_VA_shape_num, 1);
+VA_firing_rate_timeseries=  conv_gaussian(average_VA_shape_num, srate,gauss_width);
+
+average_MD_shape_num = sum(full_MD_shape_num, 1);
+MD_firing_rate_timeseries=  conv_gaussian(average_MD_shape_num, srate,gauss_width);
+
+average_pPFC_shape_num = sum(full_PFC_remote_shape_num, 1);
+pPFC_firing_rate_timeseries=  conv_gaussian(average_pPFC_shape_num, srate,gauss_width);
+
+plot(VA_firing_rate_timeseries, 'b'), xlim([st, final])
+hold on
+plot(MD_firing_rate_timeseries, 'g'), xlim([st, final])
+hold on
+plot(pPFC_firing_rate_timeseries, 'r'), xlim([st, final])
+legend('VA', 'MD', 'PFC remote')
+
 
 %%
-hold on
-get_target_neuron_id(y_pPFC_Shape>-50)
+VA_neuron_index = get_target_neuron_idex(y_VA_matrix_shape>-50);
+pPFC_neuron_index = get_target_neuron_idex(y_pPFC_Shape>-50);
+MD_neuron_index = get_target_neuron_idex(y_MD_core_shape>-50);
 
 %%
 close all
@@ -1514,28 +1540,31 @@ end
 
 
 %%
-close all
 figure(13)
 srate=1000;
 gauss_width= 100;
 st= 10000;
-final=350000;
-firing_rate_timeseries= get_firing_num(y_pPFC_Shape, gauss_width, v_th);
+final=250000;
+
+VA_neuron_index = get_target_neuron_idex(y_VA_matrix_shape>-50);
+pPFC_neuron_index = get_target_neuron_idex(y_pPFC_Shape>-50);
+MD_neuron_index = get_target_neuron_idex(y_MD_core_shape>-50);
+
+
+firing_rate_timeseries= get_firing_num(y_pPFC_Shape(pPFC_neuron_index, :) > v_th, gauss_width);
 firing_rate_timeseries=  conv_gaussian(firing_rate_timeseries, srate,gauss_width);
 
 
 plot(firing_rate_timeseries, 'b'), xlim([st, final])
 
-firing_rate_timeseries=[];
-firing_rate_timeseries= get_firing_num(y_VA_matrix_shape, gauss_width, v_th);
+firing_rate_timeseries= get_firing_num(y_VA_matrix_shape(VA_neuron_index, :) > v_th, gauss_width);
 firing_rate_timeseries=  conv_gaussian(firing_rate_timeseries, srate,gauss_width);
 
 hold on
 
 plot(firing_rate_timeseries, 'g'), xlim([st, final])
 
-firing_rate_timeseries=[];
-firing_rate_timeseries= get_firing_num(y_MD_core_shape, gauss_width, v_th);
+firing_rate_timeseries= get_firing_num(y_MD_core_shape(MD_neuron_index, :) > v_th, gauss_width);
 firing_rate_timeseries=  conv_gaussian(firing_rate_timeseries, srate,gauss_width);
 
 hold on
