@@ -1,4 +1,12 @@
 function neuron_index_list = get_target_neuron_idex(firing_mat, base_start, base_end, test_start, test_end)
+% firing_mat: matrix of where certain neuron fired at certain time or not,
+% in shape (numberofneurons, length(T))
+% base_start: start_time of baseline
+% base_end: end_time of baseline
+% test_start: start_time of testing
+% tset_end: end_time of testing
+% neuron_index_list: index of neurons of interest
+
     if nargin < 5
         base_start = 100000;
         base_end = 200000;

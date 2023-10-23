@@ -24,10 +24,13 @@ MD_off = 0;
 pPFC_off = 0;
 
 PFCD_VA_factor = 2.6;
-PFCD_MD_factor = 60;
-VA_pPFC_factor = 1;
-MD_pPFC_factor = 4;
-pPFC_MD_factor = 16;
+PFCD_MD_factor = 50;
+VA_pPFC_factor = 0.7;
+MD_pPFC_factor = 0.7; % 0.7 large enough
+pPFC_MD_factor = 100; % 100 small
+
+% placeholder for contribution from different componenent
+
 
 %   Time constants
 tha = 20; %time constant
@@ -39,7 +42,7 @@ T = 0:dt:t_final;
 
 %   Intrinsic property of neuron
 delay = 5/dt; % 3ms
-MD_delay = 8/dt; % 3ms
+MD_delay = 6/dt; % 3ms
 v_th = -50; %mv
 E_L = -65; %mv
 RM = 10;
@@ -255,38 +258,38 @@ for trial_num = 1:total_trial_num
     y_aPFC_inh = zeros(numberofneurons,length(T));
     y_aPFC_inh(1:numberofneurons,1)=-55+randomness*rand(numberofneurons,1)*5; %initializing inhibitory PFC neurons Voltages
     y_response_Ori_right = zeros(numberofneurons,length(T));
-    y_response_Ori_right(1:numberofneurons,1)=-50+randomness*rand(numberofneurons,1)*1;
+    y_response_Ori_right(1:numberofneurons,1)=-55+randomness*rand(numberofneurons,1)*1;
     y_response_Ori_left = zeros(numberofneurons,length(T));
-    y_response_Ori_left(1:numberofneurons,1)=-50+randomness*rand(numberofneurons,1)*1;
+    y_response_Ori_left(1:numberofneurons,1)=-55+randomness*rand(numberofneurons,1)*1;
     y_pPFC_ORI = zeros(numberofneurons,length(T));
-    y_pPFC_ORI(1:numberofneurons,1)= -50+ randomness*rand(numberofneurons,1)*5; %initializing the excitatory IPL neurons Voltages
+    y_pPFC_ORI(1:numberofneurons,1)= -55+ randomness*rand(numberofneurons,1)*5; %initializing the excitatory IPL neurons Voltages
     y_pPFC_ORI_LEFT = zeros(numberofneurons,length(T));
-    y_pPFC_ORI_LEFT(1:numberofneurons,1)= -50 + randomness*rand(numberofneurons,1)*5; %initializing the excitatory IPL neurons Voltages
+    y_pPFC_ORI_LEFT(1:numberofneurons,1)= -55 + randomness*rand(numberofneurons,1)*5; %initializing the excitatory IPL neurons Voltages
     y_pPFC_Shape = zeros(numberofneurons,length(T));
-    y_pPFC_Shape(1:numberofneurons,1)=-50+randomness*rand(numberofneurons,1)*5;
+    y_pPFC_Shape(1:numberofneurons,1)=-55+randomness*rand(numberofneurons,1)*5;
 
     y_pPFC_Orientation = zeros(numberofneurons,length(T));
-    y_pPFC_Orientation(1:numberofneurons,1)=-50+randomness*rand(numberofneurons,1)*5;
+    y_pPFC_Orientation(1:numberofneurons,1)=-55+randomness*rand(numberofneurons,1)*5;
 
     y_VA_matrix_shape = zeros(numberofneurons,length(T));
-    y_VA_matrix_shape(1:numberofneurons,1)=-50+randomness*rand(numberofneurons,1)*1; %initializing the thalamic neurons Voltages
+    y_VA_matrix_shape(1:numberofneurons,1)=-55+randomness*rand(numberofneurons,1)*1; %initializing the thalamic neurons Voltages
 
     y_VA_matrix_Orientation  = zeros(numberofneurons,length(T));
-    y_VA_matrix_Orientation(1:numberofneurons,1)  =-50+randomness*rand(numberofneurons,1)*1; %initializing the thalamic neurons Voltages
+    y_VA_matrix_Orientation(1:numberofneurons,1)  =-55+randomness*rand(numberofneurons,1)*1; %initializing the thalamic neurons Voltages
 
 
     y_MD_core_ori = zeros(numberofneurons,length(T));
-    y_MD_core_ori(1:numberofneurons,1)=-50+randomness*rand(numberofneurons,1)*1; %initializing the thalamic neurons Voltages
+    y_MD_core_ori(1:numberofneurons,1)=-55+randomness*rand(numberofneurons,1)*1; %initializing the thalamic neurons Voltages
     y_MD_core_shape = zeros(numberofneurons,length(T));
-    y_MD_core_shape(1:numberofneurons,1)=-50+randomness*rand(numberofneurons,1)*1; %initializing the thalamic neurons Voltages
+    y_MD_core_shape(1:numberofneurons,1)=-55+randomness*rand(numberofneurons,1)*1; %initializing the thalamic neurons Voltages
     y_SNpr_inh=zeros(numberofneurons,length(T));
     y_SNpr_inh(1:numberofneurons,1)=-55+randomness*rand(numberofneurons,1)*5;% initializing the PFC neurons Voltages
     y_ST_inh=zeros(numberofneurons,length(T));
-    y_ST_inh(1:numberofneurons,1)=-50+randomness*rand(numberofneurons,1)*0;% initializing the PFC neurons Voltages
+    y_ST_inh(1:numberofneurons,1)=-55+randomness*rand(numberofneurons,1)*0;% initializing the PFC neurons Voltages
     y_PV_inh= zeros(numberofneurons,length(T));
-    y_PV_inh (1:numberofneurons,1)=-50+randomness*rand(numberofneurons,1)*1;
+    y_PV_inh (1:numberofneurons,1)=-55+randomness*rand(numberofneurons,1)*1;
     y_FS_inh= zeros(numberofneurons,length(T));
-    y_FS_inh(1:numberofneurons,1)=-50+randomness*rand(numberofneurons,1)*1;
+    y_FS_inh(1:numberofneurons,1)=-55+randomness*rand(numberofneurons,1)*1;
 
     % driving currents-----------------------------------------------------
     Iext_IPL = 1.5 - 0.01 *(randomness*rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells

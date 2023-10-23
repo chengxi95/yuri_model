@@ -17,12 +17,12 @@ tha = 20; %time constant
 
 %   Simulation time
 dt = 0.01; %step size ms
-t_final = 3000; %simulation time ms
+t_final = 4000; %simulation time ms
 T = 0:dt:t_final;
 
 %   Intrinsic property of neuron
 delay = 5/dt; % 3ms
-MD_delay = 5/dt; % 3ms
+MD_delay = 10/dt; % 3ms
 v_th = -50; %mv
 E_L = -65; %mv
 RM = 10;
@@ -44,7 +44,7 @@ spikewidth_MD = spikewidth;
 no_of_trl = 12;
 column_length = 10;
 I_stim = zeros(numberofneurons,length(T));
-t_start_stim_1_abs = 1000; % cue time
+t_start_stim_1_abs = 2000; % cue time
 cue_amp = 0.5;
 abs_stim_duration = 450; %0.1;% stim duration is one ms
 stim_duration = abs_stim_duration/dt;
@@ -62,11 +62,11 @@ end
 
 W_local = 0.002; % synaptic weights
 W_M= 0.02;
-matrix_local = zeros(numberofneurons*2,numberofneurons*2);
-matrix_M= zeros(numberofneurons*2,numberofneurons*2);
-for ii = 1:column_length: 2*numberofneurons-column_length
+matrix_local = zeros(numberofneurons,numberofneurons);
+matrix_M= zeros(numberofneurons,numberofneurons);
+for ii = 1:column_length: numberofneurons-column_length
 
-    matrix_local(ii:ii+ column_length - 1,ii + column_length:ii+ 2*column_length-1) = W_local;
+    matrix_local(ii:ii+ column_length - 1,ii + column_length:ii+ column_length-1) = W_local;
     matrix_M(ii:ii+ column_length - 1, ii :ii+ column_length-1) = W_M;
 end
 matrix_local = matrix_local - diag(diag(matrix_local));
@@ -87,7 +87,7 @@ Matrix_DPFC_to_MD(:, 1:15)=1 ;
 Matrix_MD_to_PFC= zeros(numberofneurons,numberofneurons);%matrix_M;
 
 % random_commections= randi(numberofneurons, 1, 20);
-Matrix_MD_to_PFC(:,10:50)=1;
+Matrix_MD_to_PFC(:,1:20)=1;
 % Matrix_MD_to_PFC(26:50, 1:25)=1;
 
 Matrix_random_MD_PFC_BT= zeros(numberofneurons,numberofneurons);
@@ -132,7 +132,7 @@ W41=0.2; W42=0.2; W43=0.8; W44= 2;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PFC Deep to Thalamus
-W_PFC_TH =  0.011;% 0.0175;% 0.05;
+W_PFC_TH =  0.015;% 0.0175;% 0.05;
 W_PFC_MD= 0.0006;
 PFC_VA_matrix = zeros(numberofneurons,numberofneurons);
 PFC_VA_matrix(1: 20, 1:numberofneurons) = W_PFC_TH;
@@ -155,7 +155,7 @@ W_PFC_to_str= 0.0145;
 % MD to superficial PFC layers
 matrix_MD_to_Crtex = zeros(numberofneurons,numberofneurons);
 matrix_VA_to_rule= zeros(numberofneurons,numberofneurons);
-matrix_VA_to_rule(1:50, 1:10)= 1;
+matrix_VA_to_rule(1:50, 1:20)= 1;
 matrix_MD_to_Crtex(1:10, 1:50) = 1;                                          %????????????????????????????????????????????
 matrix_MD_to_shape= matrix_local;
 matrix_MD_to_orientation= matrix_local;
@@ -666,7 +666,7 @@ for rr= 1
             for kk=1:numberofneurons
                 if (i-last_spike_PFC_D_BT(kk))<(spikewidth) && (i-last_spike_PFC_D_BT(kk))> 0  
                     if Matrix_DPFC_to_MD(kk,jj)~=0
-                        Isyn_PFC_D_MD_shape(jj,i+ MD_delay)= Isyn_PFC_D_MD_shape(jj,i+ MD_delay) +  3*W_PFC_MD;
+                        Isyn_PFC_D_MD_shape(jj,i+ MD_delay)= Isyn_PFC_D_MD_shape(jj,i+ MD_delay) +  4*W_PFC_MD;
                     end
                 end
             end
@@ -677,7 +677,7 @@ for rr= 1
             for kk=1:numberofneurons
                 if (i-last_spike_aPFC_D_RC(kk))<(spikewidth) && (i-last_spike_aPFC_D_RC(kk))> 0 
                     if Matrix_DPFC_to_MD(kk,jj)~=0
-                        Isyn_PFC_D_MD_shape(jj,i+ MD_delay)= Isyn_PFC_D_MD_shape(jj,i+ MD_delay) +  3*W_PFC_MD;
+                        Isyn_PFC_D_MD_shape(jj,i+ MD_delay)= Isyn_PFC_D_MD_shape(jj,i+ MD_delay) +  4*W_PFC_MD;
                     end
                 end
             end
@@ -687,7 +687,7 @@ for rr= 1
             for kk=1:numberofneurons
                 if (i-last_spike_pPFC_remote_shape(kk))<(spikewidth) && (i-last_spike_pPFC_remote_shape(kk))> 0  
                     if Matrix_PFC_to_MD(kk,jj)~=0
-                        Isyn_PFC_D_MD_shape(jj,i+ MD_delay) = Isyn_PFC_D_MD_shape(jj,i+ MD_delay)+  W_PFC_MD;%%%%%%%%%%%%%%%%%% hard coding 
+                        Isyn_PFC_D_MD_shape(jj,i+ 10*MD_delay) = Isyn_PFC_D_MD_shape(jj,i+ 10* MD_delay)+  3* W_PFC_MD;%%%%%%%%%%%%%%%%%% hard coding 
                     end
                 end
             end
@@ -747,9 +747,9 @@ for rr= 1
 
         for jj=1:numberofneurons
             for kk=1:numberofneurons
-                if (i-last_spike_VA_matrix_shape(kk))<(spikewidth_VA) && (i-last_spike_VA_matrix_shape(kk))> 0 %%%%%%%%%%%%%%%%%%%%%%%%%%delay ==0
+                if (i-last_spike_VA_matrix_shape(kk))<(spikewidth) && (i-last_spike_VA_matrix_shape(kk))> 0 %%%%%%%%%%%%%%%%%%%%%%%%%%delay ==0
                     if matrix_VA_to_rule(kk,jj)~=0
-                        Isyn_VA_Matrix_to_PFC_exc_shape(jj,i+ delay)= Isyn_VA_Matrix_to_PFC_exc_shape(jj,i+ delay)+ W_VA_exi;% md_coefficient* spike_count(jj, i);
+                        Isyn_VA_Matrix_to_PFC_exc_shape(jj,i+ delay)= Isyn_VA_Matrix_to_PFC_exc_shape(jj,i+ delay)+ 2*W_VA_exi;% md_coefficient* spike_count(jj, i);
                     end
                 end
             end
@@ -757,7 +757,7 @@ for rr= 1
 
         for jj=1:numberofneurons
             for kk=1:numberofneurons
-                if (i-last_spike_VA_matrix_Orientation(kk))<(spikewidth_VA) && (i-last_spike_VA_matrix_Orientation(kk))> 0 %%%%%%%%%%%%%%%%%%%%%%%%%%delay ==0
+                if (i-last_spike_VA_matrix_Orientation(kk))<(spikewidth) && (i-last_spike_VA_matrix_Orientation(kk))> 0 %%%%%%%%%%%%%%%%%%%%%%%%%%delay ==0
                     if matrix_VA_to_rule(kk,jj)~=0
                         Isyn_VA_Matrix_to_PFC_exc_orientation(jj,i+ delay)= Isyn_VA_Matrix_to_PFC_exc_orientation(jj,i+ delay)+ W_VA_exi;% md_coefficient* spike_count(jj, i);
                     end
@@ -794,7 +794,7 @@ for rr= 1
             for kk=1:numberofneurons
                 if (i-last_spike_MD_shape(kk))<(spikewidth_MD) && (i-last_spike_MD_shape(kk))> 0 
                     if Matrix_MD_to_PFC(kk,jj)~=0
-                        Isyn_MD_shape_to_PFC(jj,i+ delay)= Isyn_MD_shape_to_PFC(jj,i+ delay)+ W_MD_PFC;% md_coefficient* spike_count(jj, i);
+                        Isyn_MD_shape_to_PFC(jj,i+ 8* MD_delay)= Isyn_MD_shape_to_PFC(jj,i+ 8* MD_delay)+  0.3* W_MD_PFC;% md_coefficient* spike_count(jj, i);
                     end
                 end
             end
@@ -1380,11 +1380,11 @@ for rr= 1
             %             %
             if (last_spike_pPFC_remote_shape(j)~=10^10 && (i-last_spike_pPFC_remote_shape(j))>tref)
 
-                y_pPFC_Shape(j,i) = y_pPFC_Shape(j,i-1)+leaky_coef*((E_L-y_pPFC_Shape(j,i-1))/tha)*dt+(Iext_PFC_remote_Shape(j)+  Isyn_aPFC_local_shared (j,i) * Isyn_VA_Matrix_to_PFC(j, i) + I_noise_PFC_6(j,i)+ Isyn_VA_Matrix_to_PFC_exc_shape(j, i)  + Isyn_MD_shape_to_PFC(j,i) + Isyn_aPFC_local_shape(j,i)* Isyn_VA_Matrix_to_PFC(j,i)  - Isyn_PV(j, i))*dt*(RM/tha);%
+                y_pPFC_Shape(j,i) = y_pPFC_Shape(j,i-1)+leaky_coef*((E_L-y_pPFC_Shape(j,i-1))/tha)*dt+(Iext_PFC_remote_Shape(j)+ 0*Isyn_aPFC_local_shared (j,i) * Isyn_VA_Matrix_to_PFC(j, i) + I_noise_PFC_6(j,i)+ Isyn_VA_Matrix_to_PFC_exc_shape(j, i)  + Isyn_MD_shape_to_PFC(j,i) + Isyn_aPFC_local_shape(j,i)* Isyn_VA_Matrix_to_PFC(j,i)  - 0*Isyn_PV(j, i))*dt*(RM/tha);%
 
             elseif last_spike_pPFC_remote_shape(j)==10^10
 
-                y_pPFC_Shape(j,i) = y_pPFC_Shape(j,i-1)+leaky_coef*((E_L-y_pPFC_Shape(j,i-1))/tha)*dt+(Iext_PFC_remote_Shape(j)+  Isyn_aPFC_local_shared (j,i) * Isyn_VA_Matrix_to_PFC(j, i) + I_noise_PFC_6(j,i)+ Isyn_VA_Matrix_to_PFC_exc_shape(j, i)  + Isyn_MD_shape_to_PFC(j,i) + Isyn_aPFC_local_shape(j,i)* Isyn_VA_Matrix_to_PFC(j,i)  - Isyn_PV(j, i))*dt*(RM/tha);%
+                y_pPFC_Shape(j,i) = y_pPFC_Shape(j,i-1)+leaky_coef*((E_L-y_pPFC_Shape(j,i-1))/tha)*dt+(Iext_PFC_remote_Shape(j)+ 0*Isyn_aPFC_local_shared (j,i) * Isyn_VA_Matrix_to_PFC(j, i) + I_noise_PFC_6(j,i)+ Isyn_VA_Matrix_to_PFC_exc_shape(j, i)  +  Isyn_MD_shape_to_PFC(j,i) + Isyn_aPFC_local_shape(j,i)* Isyn_VA_Matrix_to_PFC(j,i)  - 0*Isyn_PV(j, i))*dt*(RM/tha);%
 
             else
 
@@ -1492,6 +1492,30 @@ for rr= 1
 
 end
 
+%%
+% plot multi trial results
+
+figure(4)
+subplot(6,1,1)
+spy( y_VA_matrix_shape>-50,8,'k'),title('VA Thalamus Shape (one trial)', 'FontSize', 16)
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+subplot(6,1,2)
+spy( y_VA_matrix_Orientation >-50,8,'k'),title('VA Thalamus Orientation (one trial)', 'FontSize', 16)
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+
+subplot(6,1,3)
+spy( y_pPFC_Shape>-50,8,'b'),title('remote PFC Shape (one trial)', 'FontSize', 16)
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+subplot(6,1,4)
+spy( y_pPFC_Orientation>-50,8,'b'),title('remote PFC Ori (one trial)', 'FontSize', 16)
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+
+subplot(6,1,5)
+spy( y_MD_core_shape>-50,8,'k'),title('MD Shape (one trial)', 'FontSize', 16)
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+subplot(6,1,6)
+spy( y_MD_core_ori>-50,8,'k'),title('MD ori (one trial)', 'FontSize', 16)
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 %%
 figure(1)
@@ -1545,20 +1569,20 @@ subplot(5,1,3)
 spy( y_VA_matrix_shape>-50,8,'k'),title('VA Thalamus Shape', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 subplot(5,1,4)
-spy( y_VA_matrix_Orientation >-50,8,'k'),title('VA Thalamus Orientation', 'FontSize', 16)
+spy( y_pPFC_Shape>-50,8,'b'),title('remote PFC Shape', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 subplot(5,1,5)
 spy( y_PV_inh>-50,8,'r'),title('inhibitory PFC cells', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 
-figure (4)
-subplot(2,1,1)
-spy( y_pPFC_Shape>-50,8,'b'),title('remote PFC Shape', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-subplot(2,1,2)
-spy( y_pPFC_Orientation>-50,8,'b'),title('remote PFC Ori', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+% figure (4)
+% subplot(2,1,1)
+% spy( y_pPFC_Shape>-50,8,'b'),title('remote PFC Shape', 'FontSize', 16)
+% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+% subplot(2,1,2)
+% % spy( y_pPFC_Orientation>-50,8,'b'),title('remote PFC Ori', 'FontSize', 16)
+% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 
 %
@@ -1593,93 +1617,7 @@ set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([
 
 
 %% ploting spikes
-
-figure(5)
-hold on
-srate=1000;
-gauss_width=100;
-example_neuron=[1 3 5 10 20 ]
-hold on
-ax1=subplot(2,1,1),
-box(ax1,'on');
-no_of_trials=7
-spiketimes_VA;
-spiketimes_S;
-spiketimes_D_YT;
-spiketimes_S_remote_ORI;
-spiketimes_MD2;
-spiketimes_response;
-spike_times = spiketimes_D_YT;
-spiketimes_pPFC_D;
-for ii = 1: length(example_neuron)
-    rr= example_neuron(ii);
-    trl= floor(spike_times(find(spike_times(:,2) ==rr))./100000);
-    y = mod (spike_times(find(spike_times(:,2) ==rr), 1),100000 );
-    spikes= [trl,y];
-    for jj=1:max(trl)+1
-        temp = find(spikes(:,1)==jj);
-        if isempty(temp) == 0
-            x=[];
-            x = spikes( temp, 2);
-            nspikes = numel(x);
-            for k = 1:nspikes
-                ax1=subplot(1,5,ii),
-
-                line([x(k) x(k)], [jj-0.5 jj+0.5],'Color','k');  xlim([1 100000]),ylim([0.5  no_of_trials+0.5 ]),ylabel(' # of trials','FontSize',13),title('D PFC ','FontSize',13);
-
-            end
-        end
-
-    end
-end
-
 %%
-spike_times = spiketimes_D_YT;
-
-a=axes;
-set(a,'Units','normalized')
-P=get(a,'Position');
-set(a,'Position',P+[0 -0.03 0 0])
-new_timeseries=zeros(numberofneurons, t_final*100,1);
-
-for hhh=1:numberofneurons
-    y=[];
-    spikes=[];
-    trl= floor(spike_times(find(spike_times(:,2) == hhh), 1)./100000)
-    y = mod (spike_times(find(spike_times(:,2) == hhh), 1),100000 )
-    spikes= [trl,y];
-    for kk=1:max(trl)+1
-        temp = find(spikes(:,1)== kk);
-        if isempty(temp) == 0
-            x =spikes(find(spikes(:,1)== kk),2)';
-            new_timeseries(hhh,x+1,kk)=1;
-        end
-    end
-end
-
-srate=1000;
-gauss_width= 5000;
-
-for j= 1 :  length(example_neuron)
-    temp=[];xxx = [];
-    rr= example_neuron(j);
-
-    temp= squeeze(new_timeseries(rr, :, :));
-    temp = temp';
-    xxx= mean(temp);
-    subplot(2,5,j+5)
-    % hold on
-    %
-    % plot(xxx)
-
-    new_matrix_pfc = conv_gaussian(xxx, srate,gauss_width);
-
-    plot((new_matrix_pfc), 'k' ), xlim([1 100000]); ylim([0 1]),xlabel('time','FontSize',13),ylabel('Cumulative activity','FontSize',13)
-
-    new_matrix_pfc=[];
-
-end
-
 
 
 %%
@@ -1688,7 +1626,7 @@ figure(13)
 srate=1000;
 gauss_width= 100;
 st= 10000;
-final=350000;
+final=200000;
 firing_rate_timeseries= get_firing_num(y_pPFC_Shape, gauss_width, v_th);
 firing_rate_timeseries=  conv_gaussian(firing_rate_timeseries, srate,gauss_width);
 
