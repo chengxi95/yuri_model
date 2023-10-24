@@ -1,7 +1,6 @@
 
 close all;
 clear all;
-rng('default')
 % this code simulate two populations of cortical cells (aPFC and pPFC superficial and deep layers)  and three population of thalamic cells (aPFC core, pPFC core and Matrix cells)during a working memory task.
 % our assumption is that thalamus increases the
 % cortico-cortical connectivity gain by a coefiecint an amplification
@@ -17,7 +16,7 @@ tha = 20; %time constant
 
 %   Simulation time
 dt = 0.01; %step size ms
-t_final = 4000; %simulation time ms
+t_final = 10000; %simulation time ms
 T = 0:dt:t_final;
 
 %   Intrinsic property of neuron
@@ -62,11 +61,11 @@ end
 
 W_local = 0.002; % synaptic weights
 W_M= 0.02;
-matrix_local = zeros(numberofneurons,numberofneurons);
-matrix_M= zeros(numberofneurons,numberofneurons);
-for ii = 1:column_length: numberofneurons-column_length
+matrix_local = zeros(numberofneurons*2,numberofneurons*2);
+matrix_M= zeros(numberofneurons*2,numberofneurons*2);
+for ii = 1:column_length: 2*numberofneurons-column_length
 
-    matrix_local(ii:ii+ column_length - 1,ii + column_length:ii+ column_length-1) = W_local;
+    matrix_local(ii:ii+ column_length - 1,ii + column_length:ii+ 2*column_length-1) = W_local;
     matrix_M(ii:ii+ column_length - 1, ii :ii+ column_length-1) = W_M;
 end
 matrix_local = matrix_local - diag(diag(matrix_local));
@@ -666,7 +665,7 @@ for rr= 1
             for kk=1:numberofneurons
                 if (i-last_spike_PFC_D_BT(kk))<(spikewidth) && (i-last_spike_PFC_D_BT(kk))> 0  
                     if Matrix_DPFC_to_MD(kk,jj)~=0
-                        Isyn_PFC_D_MD_shape(jj,i+ MD_delay)= Isyn_PFC_D_MD_shape(jj,i+ MD_delay) +  4*W_PFC_MD;
+                        Isyn_PFC_D_MD_shape(jj,i+ MD_delay)= Isyn_PFC_D_MD_shape(jj,i+ MD_delay) +  5*W_PFC_MD;
                     end
                 end
             end
@@ -677,7 +676,7 @@ for rr= 1
             for kk=1:numberofneurons
                 if (i-last_spike_aPFC_D_RC(kk))<(spikewidth) && (i-last_spike_aPFC_D_RC(kk))> 0 
                     if Matrix_DPFC_to_MD(kk,jj)~=0
-                        Isyn_PFC_D_MD_shape(jj,i+ MD_delay)= Isyn_PFC_D_MD_shape(jj,i+ MD_delay) +  4*W_PFC_MD;
+                        Isyn_PFC_D_MD_shape(jj,i+ MD_delay)= Isyn_PFC_D_MD_shape(jj,i+ MD_delay) +  5*W_PFC_MD;
                     end
                 end
             end
@@ -794,7 +793,7 @@ for rr= 1
             for kk=1:numberofneurons
                 if (i-last_spike_MD_shape(kk))<(spikewidth_MD) && (i-last_spike_MD_shape(kk))> 0 
                     if Matrix_MD_to_PFC(kk,jj)~=0
-                        Isyn_MD_shape_to_PFC(jj,i+ 8* MD_delay)= Isyn_MD_shape_to_PFC(jj,i+ 8* MD_delay)+  0.3* W_MD_PFC;% md_coefficient* spike_count(jj, i);
+                        Isyn_MD_shape_to_PFC(jj,i+ 8* MD_delay)= Isyn_MD_shape_to_PFC(jj,i+ 8* MD_delay)+  0.33 * W_MD_PFC;% md_coefficient* spike_count(jj, i);
                     end
                 end
             end
@@ -1492,30 +1491,6 @@ for rr= 1
 
 end
 
-%%
-% plot multi trial results
-
-figure(4)
-subplot(6,1,1)
-spy( y_VA_matrix_shape>-50,8,'k'),title('VA Thalamus Shape (one trial)', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-subplot(6,1,2)
-spy( y_VA_matrix_Orientation >-50,8,'k'),title('VA Thalamus Orientation (one trial)', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-
-subplot(6,1,3)
-spy( y_pPFC_Shape>-50,8,'b'),title('remote PFC Shape (one trial)', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-subplot(6,1,4)
-spy( y_pPFC_Orientation>-50,8,'b'),title('remote PFC Ori (one trial)', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-
-subplot(6,1,5)
-spy( y_MD_core_shape>-50,8,'k'),title('MD Shape (one trial)', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-subplot(6,1,6)
-spy( y_MD_core_ori>-50,8,'k'),title('MD ori (one trial)', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 %%
 figure(1)
@@ -1606,14 +1581,14 @@ close all
 
 figure(11)
 spy( y_VA_matrix_shape>-50,8,'k'),title('VA Thalamus Shape', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 hold on 
 spy( y_MD_core_shape>-50,8,'r'),title('MD', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 hold on
 spy( y_pPFC_Shape>-50,8,'b'),title('remote PFC Shape', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 
 %% ploting spikes
@@ -1626,7 +1601,7 @@ figure(13)
 srate=1000;
 gauss_width= 100;
 st= 10000;
-final=200000;
+final=800000;
 firing_rate_timeseries= get_firing_num(y_pPFC_Shape, gauss_width, v_th);
 firing_rate_timeseries=  conv_gaussian(firing_rate_timeseries, srate,gauss_width);
 
