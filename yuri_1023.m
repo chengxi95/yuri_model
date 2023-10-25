@@ -1,7 +1,7 @@
 
 close all;
 clear all;
-% rng('default')
+rng('default')
 % this code simulate two populations of cortical cells (aPFC and pPFC superficial and deep layers)  and three population of thalamic cells (aPFC core, pPFC core and Matrix cells)during a working memory task.
 % our assumption is that thalamus increases the
 % cortico-cortical connectivity gain by a coefiecint an amplification
