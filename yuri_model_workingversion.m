@@ -15,7 +15,7 @@ numberofneurons = 50;% number of neurons per group
 %   Time constants
 tha = 20; %time constant
 
-total_trial_num = 100;
+total_trial_num = 10;
 gauss_width= 100;
 
 %   Simulation time
@@ -27,7 +27,7 @@ T = 0:dt:t_final;
 VA_off = 0;
 MD_off = 0;
 pPFC_off = 0;
-PV_off = 0;
+PV_off = 1;
 
 %   Intrinsic property of neuron
 delay = 5/dt; % 3ms
@@ -39,24 +39,24 @@ leaky_coef = 1; %
 tref = 1/dt; % 1 ms refratory time
 
 % placeholder for multi trials results (first neuron of the section are saved)
-full_PFC_S_BT = zeros(total_trial_num, length(T)); 
-full_PFC_S_RC = zeros(total_trial_num, length(T));
-full_PFC_S_GC = zeros(total_trial_num, length(T)); 
-full_PFC_S_YT = zeros(total_trial_num, length(T));
+full_PFC_S_BT = false(total_trial_num, numberofneurons, length(T)); 
+full_PFC_S_RC = false(total_trial_num, numberofneurons, length(T));
+full_PFC_S_GC = false(total_trial_num, numberofneurons, length(T)); 
+full_PFC_S_YT = false(total_trial_num, numberofneurons, length(T));
 
-full_PFC_D_BT = zeros(total_trial_num, length(T)); 
-full_PFC_D_RC = zeros(total_trial_num, length(T));
-full_PFC_D_GC = zeros(total_trial_num, length(T)); 
-full_PFC_D_YT = zeros(total_trial_num, length(T)); 
+full_PFC_D_BT = false(total_trial_num, numberofneurons, length(T)); 
+full_PFC_D_RC = false(total_trial_num, numberofneurons, length(T));
+full_PFC_D_GC = false(total_trial_num, numberofneurons, length(T)); 
+full_PFC_D_YT = false(total_trial_num, numberofneurons, length(T)); 
 
-full_VA_shape = zeros(total_trial_num, length(T));
-full_VA_ori = zeros(total_trial_num, length(T)); 
+full_VA_shape = false(total_trial_num, numberofneurons, length(T));
+full_VA_ori = false(total_trial_num, numberofneurons, length(T)); 
 
-full_MD_shape = zeros(total_trial_num, length(T));
-full_MD_ori = zeros(total_trial_num, length(T)); 
+full_MD_shape = false(total_trial_num, numberofneurons, length(T));
+full_MD_ori = false(total_trial_num, numberofneurons, length(T)); 
 
-full_PFC_remote_shape = zeros(total_trial_num, length(T));
-full_PFC_remote_ori = zeros(total_trial_num, length(T));
+full_PFC_remote_shape = false(total_trial_num, numberofneurons, length(T));
+full_PFC_remote_ori = false(total_trial_num, numberofneurons, length(T));
 
 % save the total firing number for VA, MD and PFC remote shape to compare
 % the order
@@ -1166,20 +1166,20 @@ for rr= 1:total_trial_num
     % LFP_MD_matrix(rr,:)= smooth(mean(I_noise_md_1)+ mean(I_noise_md_2)+ mean(I_noise_VA)+ mean(Isyn_PFC_D_MD_ori)+mean(Isyn_PFC_D_MD_shape)+ mean(Isyn_PFC_D_MD_ori));% post-synaptic current in pfc
     % LFP_response(rr,:)= smooth(mean(Isyn_pPFCD_to_response_effective)+ mean(I_noise_PFC));
 
-    full_PFC_S_BT(rr, :) = y_PFC_S_BT(1, :) > v_th;
-    full_PFC_S_RC(rr, :) = y_PFC_S_RC(1, :) > v_th;
-    full_PFC_S_GC(rr, :) = y_PFC_S_GC(1, :) > v_th;
-    full_PFC_S_YT(rr, :) = y_PFC_S_YT(1, :) > v_th;
-    full_PFC_D_BT(rr, :) = y_aPFC_D_BT(1, :) > v_th;
-    full_PFC_D_RC(rr, :) = y_aPFC_D_RC(1, :) > v_th;
-    full_PFC_D_GC(rr, :) = y_aPFC_D_GC(1, :) > v_th;
-    full_PFC_D_YT(rr, :) = y_aPFC_D_YT(1, :) > v_th;
-    full_VA_shape(rr, :) = y_VA_matrix_shape(1, :) > v_th;
-    full_VA_ori(rr, :) = y_VA_matrix_shape(1, :) > v_th;
-    full_MD_shape(rr, :) = y_pPFC_Shape(1, :) > v_th;
-    full_MD_ori(rr, :) = y_MD_core_ori(1, :) > v_th;
-    full_PFC_remote_shape(rr, :) = y_pPFC_Shape(1, :) > v_th;
-    full_PFC_remote_ori(rr, :) = y_pPFC_Orientation(1, :) > v_th;
+    full_PFC_S_BT(rr, :, :) = y_PFC_S_BT > v_th;
+    full_PFC_S_RC(rr, :, :) = y_PFC_S_RC > v_th;
+    full_PFC_S_GC(rr, :, :) = y_PFC_S_GC > v_th;
+    full_PFC_S_YT(rr, :, :) = y_PFC_S_YT > v_th;
+    full_PFC_D_BT(rr, :, :) = y_aPFC_D_BT > v_th;
+    full_PFC_D_RC(rr, :, :) = y_aPFC_D_RC > v_th;
+    full_PFC_D_GC(rr, :, :) = y_aPFC_D_GC > v_th;
+    full_PFC_D_YT(rr, :, :) = y_aPFC_D_YT > v_th;
+    full_VA_shape(rr, :, :) = y_VA_matrix_shape > v_th;
+    full_VA_ori(rr, :, :) = y_VA_matrix_shape > v_th;
+    full_MD_shape(rr, :, :) = y_pPFC_Shape > v_th;
+    full_MD_ori(rr, :, :) = y_MD_core_ori > v_th;
+    full_PFC_remote_shape(rr, :, :) = y_pPFC_Shape > v_th;
+    full_PFC_remote_ori(rr, :, :) = y_pPFC_Orientation > v_th;
 
     VA_neuron_index = get_target_neuron_idex(y_VA_matrix_shape>v_th);
     MD_neuron_index = get_target_neuron_idex(y_MD_core_shape>v_th);
