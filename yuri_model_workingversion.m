@@ -15,7 +15,7 @@ numberofneurons = 50;% number of neurons per group
 %   Time constants
 tha = 20; %time constant
 
-total_trial_num = 50;
+total_trial_num = 2;
 gauss_width= 100;
  
 %   Simulation time
@@ -39,24 +39,44 @@ leaky_coef = 1; %
 tref = 1/dt; % 1 ms refratory time
 
 % placeholder for multi trials results (first neuron of the section are saved)
-full_PFC_S_BT = []; 
-full_PFC_S_RC = [];
-full_PFC_S_GC = []; 
-full_PFC_S_YT = [];
+% full_PFC_S_BT = []; 
+% full_PFC_S_RC = [];
+% full_PFC_S_GC = []; 
+% full_PFC_S_YT = [];
+% 
+% full_PFC_D_BT = []; 
+% full_PFC_D_RC = [];
+% full_PFC_D_GC = []; 
+% full_PFC_D_YT = []; 
+% 
+% full_VA_shape = [];
+% full_VA_ori = []; 
+% 
+% full_MD_shape = [];
+% full_MD_ori = []; 
+% 
+% full_PFC_remote_shape = [];
+% full_PFC_remote_ori = [];
 
-full_PFC_D_BT = []; 
-full_PFC_D_RC = [];
-full_PFC_D_GC = []; 
-full_PFC_D_YT = []; 
+full_PFC_S_BT = {}; 
+full_PFC_S_RC = {};
+full_PFC_S_GC = {}; 
+full_PFC_S_YT = {};
 
-full_VA_shape = [];
-full_VA_ori = []; 
+full_PFC_D_BT = {}; 
+full_PFC_D_RC = {};
+full_PFC_D_GC = {}; 
+full_PFC_D_YT = {}; 
 
-full_MD_shape = [];
-full_MD_ori = []; 
+full_VA_shape = {};
+full_VA_ori = {}; 
 
-full_PFC_remote_shape = [];
-full_PFC_remote_ori = [];
+full_MD_shape = {};
+full_MD_ori = {}; 
+
+full_PFC_remote_shape = {};
+full_PFC_remote_ori = {};
+
 
 % save the total firing number for VA, MD and PFC remote shape to compare
 % the order
@@ -203,6 +223,7 @@ W_IPL_Inh_to_exc_fs= 0.005;%25;%synaptic weight
 W_VA_exi = 0.005;
 W_MD_inh = 0.003;
 W_MD_PFC = 0.012;
+
 
 for rr= 1:total_trial_num
     tic
@@ -1165,62 +1186,79 @@ for rr= 1:total_trial_num
     % LFP_pPFC_D(rr,:)= smooth(mean(Isyn_pPFC_S_to_D_effective)+ mean(Isyn_pPFC_D_effective)+ mean(I_noise_PFC_3));% post-synaptic current in pfc
     % LFP_MD_matrix(rr,:)= smooth(mean(I_noise_md_1)+ mean(I_noise_md_2)+ mean(I_noise_VA)+ mean(Isyn_PFC_D_MD_ori)+mean(Isyn_PFC_D_MD_shape)+ mean(Isyn_PFC_D_MD_ori));% post-synaptic current in pfc
     % LFP_response(rr,:)= smooth(mean(Isyn_pPFCD_to_response_effective)+ mean(I_noise_PFC));
-    
-    [neuo_id, firing_time] = find(y_PFC_S_BT > v_th);
+        
+    [neuo_id, firing_time] = find(get_firing(y_PFC_S_BT, v_th, 1));
     full_PFC_S_BT = [full_PFC_S_BT; cat(2, neuo_id, firing_time)];
 
-    [neuo_id, firing_time] = find(y_PFC_S_RC > v_th);
+    [neuo_id, firing_time] = find(get_firing(y_PFC_S_RC, v_th, 1));
     full_PFC_S_RC = [full_PFC_S_RC; cat(2, neuo_id, firing_time)];
 
-    [neuo_id, firing_time] = find(y_PFC_S_GC > v_th);
+    [neuo_id, firing_time] = find(get_firing(y_PFC_S_GC, v_th, 1));
     full_PFC_S_GC = [full_PFC_S_GC; cat(2, neuo_id, firing_time)];
 
-    [neuo_id, firing_time] = find(y_PFC_S_YT > v_th);
+    [neuo_id, firing_time] = find(get_firing(y_PFC_S_YT, v_th, 1));
     full_PFC_S_YT = [full_PFC_S_YT; cat(2, neuo_id, firing_time)];
     
-    [neuo_id, firing_time] = find(y_aPFC_D_BT > v_th);
+    [neuo_id, firing_time] = find(get_firing(y_aPFC_D_BT, v_th, 1));
     full_PFC_D_BT = [full_PFC_D_BT; cat(2, neuo_id, firing_time)];
 
-    [neuo_id, firing_time] = find(y_aPFC_D_RC > v_th);
+    [neuo_id, firing_time] = find(get_firing(y_aPFC_D_RC, v_th, 1));
     full_PFC_D_RC = [full_PFC_D_RC; cat(2, neuo_id, firing_time)];
 
-    [neuo_id, firing_time] = find(y_aPFC_D_GC > v_th);
+    [neuo_id, firing_time] = find(get_firing(y_aPFC_D_GC, v_th, 1));
     full_PFC_D_GC = [full_PFC_D_GC; cat(2, neuo_id, firing_time)];
 
-    [neuo_id, firing_time] = find(y_aPFC_D_YT > v_th);
+    [neuo_id, firing_time] = find(get_firing(y_aPFC_D_YT, v_th, 1));
     full_PFC_D_YT = [full_PFC_D_YT; cat(2, neuo_id, firing_time)];
-
-    [neuo_id, firing_time] = find(y_VA_matrix_shape > v_th);
+    
+    [neuo_id, firing_time] = find(get_firing(y_VA_matrix_shape, v_th, 1));
     full_VA_shape = [full_VA_shape; cat(2, neuo_id, firing_time)];
 
-    [neuo_id, firing_time] = find(y_VA_matrix_Orientation > v_th);
+    [neuo_id, firing_time] = find(get_firing(y_VA_matrix_Orientation, v_th, 1));
     full_VA_ori = [full_VA_ori; cat(2, neuo_id, firing_time)];
-
-    [neuo_id, firing_time] = find(y_pPFC_Shape > v_th);
+    
+    [neuo_id, firing_time] = find(get_firing(y_MD_core_shape, v_th, 1));
     full_MD_shape = [full_MD_shape; cat(2, neuo_id, firing_time)];
-
-    [neuo_id, firing_time] = find(y_MD_core_ori > v_th);
+     
+    [neuo_id, firing_time] = find(get_firing(y_MD_core_ori, v_th, 1));
     full_MD_ori = [full_MD_ori; cat(2, neuo_id, firing_time)];
-
-    [neuo_id, firing_time] = find(y_pPFC_Shape > v_th);
+    
+    [neuo_id, firing_time] = find(get_firing(y_pPFC_Shape, v_th, 1));
     full_PFC_remote_shape = [full_PFC_remote_shape; cat(2, neuo_id, firing_time)];
-
-    [neuo_id, firing_time] = find(y_pPFC_Orientation > v_th);
+    
+    [neuo_id, firing_time] = find(get_firing(y_pPFC_Orientation, v_th, 1));
     full_PFC_remote_ori = [full_PFC_remote_ori; cat(2, neuo_id, firing_time)];
 
-    VA_neuron_index = get_target_neuron_idex(y_VA_matrix_shape>v_th);
-    MD_neuron_index = get_target_neuron_idex(y_MD_core_shape>v_th);
-    pPFC_neuron_index = get_target_neuron_idex(y_pPFC_Shape>v_th);
+    VA_neuron_index = get_target_neuron_idex(get_firing(y_VA_matrix_shape, v_th, 1));
+    MD_neuron_index = get_target_neuron_idex(get_firing(y_MD_core_shape, v_th, 1));
+    pPFC_neuron_index = get_target_neuron_idex(get_firing(y_pPFC_Shape, v_th, 1));
 
-    % only select target neuron set, movsum in get_firing_num keeps the dimenstion same 
-    full_VA_shape_num(rr, :) =  get_firing_num(y_VA_matrix_shape(VA_neuron_index, :) > v_th, gauss_width);
-    full_MD_shape_num(rr, :) = get_firing_num(y_MD_core_shape(MD_neuron_index, :) > v_th, gauss_width);
-    full_PFC_remote_shape_num(rr, :) = get_firing_num(y_pPFC_Shape(pPFC_neuron_index, :) > v_th, gauss_width);
+    % only select target neuron set, movsum in get_firing_num keeps the dimenstion same   
+    full_VA_shape_num(rr, :) =  get_firing_num(get_firing(y_VA_matrix_shape(VA_neuron_index, :), v_th, 1), gauss_width);
+    full_MD_shape_num(rr, :) = get_firing_num(get_firing(y_MD_core_shape(MD_neuron_index, :), v_th, 1), gauss_width);
+    full_PFC_remote_shape_num(rr, :) = get_firing_num(get_firing(y_pPFC_Shape(pPFC_neuron_index, :), v_th, 1), gauss_width);
     
     disp(rr);
     toc
         
 end
+
+
+
+%%
+neuron_id = 3;
+b = get_firing(y_pPFC_Shape, v_th, 1);
+a = find(get_firing(y_pPFC_Shape, v_th, 1));
+test = full_PFC_remote_shape{1};
+test2 = test(test(:, 1) == neuron_id, 2);
+PFC_remote_certain_neuron = zeros(total_trial_num, length(T));
+
+for i = 1:total_trial_num
+    temp = full_PFC_remote_shape{i};
+    PFC_remote_certain_neuron(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+end
+
+spy(PFC_remote_certain_neuron)
 
 
 %%
@@ -1436,3 +1474,11 @@ firing_rate_timeseries=  conv_gaussian(firing_rate_timeseries, srate,gauss_width
 hold on
 
 plot(firing_rate_timeseries, 'r'), xlim([st, final])
+
+
+function firing = get_firing(current, threshold, nanvalue)
+% current: membrane potiential
+% window_size: threshold for firing
+% thresh: predefined nan value
+    firing = (current > threshold) & (current ~= nanvalue);
+end
