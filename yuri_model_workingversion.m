@@ -15,7 +15,7 @@ numberofneurons = 50;% number of neurons per group
 %   Time constants
 tha = 20; %time constant
 
-total_trial_num = 1;
+total_trial_num = 3;
 gauss_width= 100;
  
 %   Simulation time
@@ -1246,80 +1246,127 @@ end
 
 
 %%
-neuron_id = 3;
-b = get_firing(y_pPFC_Shape, v_th, 1);
-a = find(get_firing(y_pPFC_Shape, v_th, 1));
-test = full_PFC_remote_shape{1};
-test2 = test(test(:, 1) == neuron_id, 2);
-PFC_remote_certain_neuron = zeros(total_trial_num, length(T));
+neuron_id = 1;
+PFC_S_BT = zeros(total_trial_num, length(T));
+PFC_S_RC = zeros(total_trial_num, length(T));
+PFC_S_GC = zeros(total_trial_num, length(T));
+PFC_S_YT = zeros(total_trial_num, length(T));
+
+PFC_D_BT = zeros(total_trial_num, length(T));
+PFC_D_RC = zeros(total_trial_num, length(T));
+PFC_D_GC = zeros(total_trial_num, length(T));
+PFC_D_YT = zeros(total_trial_num, length(T));
+
+VA_shape = zeros(total_trial_num, length(T));
+VA_ori = zeros(total_trial_num, length(T));
+
+PFC_remote_shape = zeros(total_trial_num, length(T));
+PFC_remote_ori = zeros(total_trial_num, length(T));
+
+MD_shape = zeros(total_trial_num, length(T));
+MD_ori = zeros(total_trial_num, length(T));
 
 for i = 1:total_trial_num
+    temp = full_PFC_S_BT{i};
+    PFC_S_BT(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+
+    temp = full_PFC_S_RC{i};
+    PFC_S_RC(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+
+    temp = full_PFC_S_GC{i};
+    PFC_S_GC(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+
+    temp = full_PFC_S_YT{i};
+    PFC_S_YT(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+
+    temp = full_PFC_D_BT{i};
+    PFC_D_BT(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+
+    temp = full_PFC_D_RC{i};
+    PFC_D_RC(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+
+    temp = full_PFC_D_GC{i};
+    PFC_D_GC(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+
+    temp = full_PFC_D_YT{i};
+    PFC_D_YT(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+
+    temp = full_VA_shape{i};
+    VA_shape(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+
+    % temp = full_VA_ori{i};
+    % VA_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+
     temp = full_PFC_remote_shape{i};
-    PFC_remote_certain_neuron(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    PFC_remote_shape(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+
+    % temp = full_PFC_remote_ori{i};
+    % PFC_remote_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+
+    temp = full_MD_shape{i};
+    MD_shape(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+
+    % temp = full_MD_ori{i};
+    % MD_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
 end
-
-spy(PFC_remote_certain_neuron)
-
-
-%%
 
 figure(1)
 
 subplot(4,1,1)
-spy( full_PFC_S_BT, 8,'b'),title('PFC Superficial blue triangle', 'FontSize', 16)
+spy( PFC_S_BT, 8,'b'),title('PFC Superficial blue triangle', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 
 subplot(4,1,2)
-spy( full_PFC_S_RC, 8,'b'),title('PFC Superficial red circle ', 'FontSize', 16)
+spy( PFC_S_RC, 8,'b'),title('PFC Superficial red circle ', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 subplot(4,1,3)
-spy( full_PFC_S_GC, 8,'b'),title('PFC Superficial green circle ', 'FontSize', 16)
+spy( PFC_S_GC, 8,'b'),title('PFC Superficial green circle ', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 subplot(4,1,4)
-spy( full_PFC_S_YT,8,'b'),title('PFC Superficial yellow triangle', 'FontSize', 16)
+spy( PFC_S_YT,8,'b'),title('PFC Superficial yellow triangle', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 %
 figure (2)
 subplot(4,1,1)
-spy( full_PFC_D_BT,8,'k'),title('PFC Deep blue triangle', 'FontSize', 16)
+spy( PFC_D_BT,8,'k'),title('PFC Deep blue triangle', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 subplot(4,1,2)
-spy( full_PFC_D_RC,8,'k'),title('PFC Deep red circle', 'FontSize', 16)
+spy( PFC_D_RC,8,'k'),title('PFC Deep red circle', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 subplot(4,1,3)
-spy( full_PFC_D_GC,8,'k'),title('PFC Deep green circle', 'FontSize', 16)
+spy( PFC_D_GC,8,'k'),title('PFC Deep green circle', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 subplot(4,1,4)
-spy( full_PFC_D_YT,8,'k'),title('PFC Deep yellow triangle', 'FontSize', 16)
+spy( PFC_D_YT,8,'k'),title('PFC Deep yellow triangle', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 
 figure( 3)
 subplot(6,1,1)
-spy( full_VA_shape,8,'k'),title('VA Thalamus Shape', 'FontSize', 16)
+spy( VA_shape,8,'k'),title('VA Thalamus Shape', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 subplot(6,1,2)
-spy( full_VA_ori,8,'k'),title('VA Thalamus Orientation', 'FontSize', 16)
+spy( VA_ori,8,'k'),title('VA Thalamus Orientation', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 subplot(6,1,3)
-spy( full_PFC_remote_shape,8,'b'),title('remote PFC Shape', 'FontSize', 16)
+spy( PFC_remote_shape,8,'b'),title('remote PFC Shape', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 subplot(6,1,4)
-spy( full_PFC_remote_ori,8,'b'),title('remote PFC Ori', 'FontSize', 16)
+spy( PFC_remote_ori,8,'b'),title('remote PFC Ori', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 subplot(6,1,5)
-spy( full_MD_shape,8,'k'),title('MD Shape', 'FontSize', 16)
+spy( MD_shape,8,'k'),title('MD Shape', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 subplot(6,1,6)
-spy( full_MD_ori,8,'k'),title('MD ori', 'FontSize', 16)
+spy( MD_ori,8,'k'),title('MD ori', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 figure(4)
