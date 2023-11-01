@@ -1,7 +1,7 @@
 
 close all;
 clear all;
-
+% rng('default')
 % this code simulate two populations of cortical cells (aPFC and pPFC superficial and deep layers)  and three population of thalamic cells (aPFC core, pPFC core and Matrix cells)during a working memory task.
 % our assumption is that thalamus increases the
 % cortico-cortical connectivity gain by a coefiecint an amplification
@@ -15,7 +15,7 @@ numberofneurons = 50;% number of neurons per group
 %   Time constants
 tha = 20; %time constant
 
-total_trial_num = 2;
+total_trial_num = 1;
 gauss_width= 100;
  
 %   Simulation time
@@ -27,7 +27,7 @@ T = 0:dt:t_final;
 VA_off = 0;
 MD_off = 0;
 pPFC_off = 0;
-PV_off = 1;
+PV_off = 0;
 
 %   Intrinsic property of neuron
 delay = 5/dt; % 3ms
@@ -142,7 +142,7 @@ Matrix_DPFC_to_MD(:, 1:15)=1 ;
 Matrix_MD_to_PFC= zeros(numberofneurons,numberofneurons);%matrix_M;
 
 % random_commections= randi(numberofneurons, 1, 20);
-Matrix_MD_to_PFC(:,1:20)=1;
+Matrix_MD_to_PFC(:,1:25)=1;
 % Matrix_MD_to_PFC(26:50, 1:25)=1;
 
 Matrix_random_MD_PFC_BT= zeros(numberofneurons,numberofneurons);
@@ -587,7 +587,7 @@ for rr= 1:total_trial_num
 
         if ~MD_off
 
-            Isyn_MD_shape_to_PFC(:,i+ 8*MD_delay) = Isyn_MD_shape_to_PFC(:,i+ 8*MD_delay) +  0.33*W_MD_PFC .* sum(((i-last_spike_MD_shape<spikewidth_MD) & (i-last_spike_MD_shape>0) & (Matrix_MD_to_PFC ~= 0)), 1).'; 
+            Isyn_MD_shape_to_PFC(:,i+ 8*MD_delay) = Isyn_MD_shape_to_PFC(:,i+ 8*MD_delay) +  0.3*W_MD_PFC .* sum(((i-last_spike_MD_shape<spikewidth_MD) & (i-last_spike_MD_shape>0) & (Matrix_MD_to_PFC ~= 0)), 1).'; 
     
             Isyn_MD_shape_to_random_PFC_BT(:,i+ delay) = Isyn_MD_shape_to_random_PFC_BT(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_shape<spikewidth_MD) & (i-last_spike_MD_shape>0) & (Matrix_random_MD_PFC_BT ~= 0)), 1).'; 
     
