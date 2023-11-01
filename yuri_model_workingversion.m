@@ -15,7 +15,7 @@ numberofneurons = 50;% number of neurons per group
 %   Time constants
 tha = 20; %time constant
 
-total_trial_num = 3;
+total_trial_num = 50;
 gauss_width= 100;
  
 %   Simulation time
@@ -225,6 +225,39 @@ W_MD_inh = 0.003;
 W_MD_PFC = 0.012;
 
 
+% driving currents-----------------------------------------------------
+Iext_IPL = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_SPFC_YT = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_SPFC_BT = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_SPFC_RC = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_SPFC_GC = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_DPFC_YT = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_DPFC_BT = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_DPFC_RC = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_DPFC_GC = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+
+
+
+Iext_PFC = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+
+
+
+
+Iext_PFC_M = 1.5 - 0.01 *(rand(numberofneurons,1));
+Iext_PFC_remote_ORI = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_PFC_remote_Shape = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_PFC_D = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_PFC_D_2 = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_PFC_D_3 = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_PFC_2 = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_PFC_3 = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
+Iext_MD = 1.5 - 0.005 *rand(numberofneurons,1); % same driving current for all thalamic cells
+Iext_VA = 1.5 - 0.01 *rand(numberofneurons,1); % same driving current for all thalamic cells
+Iext_Inh = 1.5 -  0.01 *(rand(numberofneurons,1)-0.5); % driving current for inhibitory cells similar in PFC and IPL
+Iext_Inh_pPFC = 1.5 - 0.01 *(rand(numberofneurons,1)-0.5); %driving current for inhibitory cells similar in PFC and IPL
+Iext_Inh_PV = 1.49 - 0.0 *(rand(numberofneurons,1));
+Iext_response = 1.5 - 0.01 *(rand(numberofneurons,1));
+
 for rr= 1:total_trial_num
     tic
     % Initialize membrane  potential---------------------------------------
@@ -299,38 +332,6 @@ for rr= 1:total_trial_num
     y_FS_inh= zeros(numberofneurons,length(T));
     y_FS_inh(1:numberofneurons,1)=-55+rand(numberofneurons,1)*1;
 
-    % driving currents-----------------------------------------------------
-    Iext_IPL = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_SPFC_YT = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_SPFC_BT = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_SPFC_RC = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_SPFC_GC = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_DPFC_YT = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_DPFC_BT = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_DPFC_RC = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_DPFC_GC = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-  
-    
-    
-    Iext_PFC = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-
-
-
-
-    Iext_PFC_M = 1.5 - 0.01 *(rand(numberofneurons,1));
-    Iext_PFC_remote_ORI = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_PFC_remote_Shape = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_PFC_D = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_PFC_D_2 = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_PFC_D_3 = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_PFC_2 = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_PFC_3 = 1.5 - 0.01 *(rand(numberofneurons,1)); % similar driving current for PFC and IPL cells small variation across cells
-    Iext_MD = 1.5 - 0.005 *rand(numberofneurons,1); % same driving current for all thalamic cells
-    Iext_VA = 1.5 - 0.01 *rand(numberofneurons,1); % same driving current for all thalamic cells
-    Iext_Inh = 1.5 -  0.01 *(rand(numberofneurons,1)-0.5); % driving current for inhibitory cells similar in PFC and IPL
-    Iext_Inh_pPFC = 1.5 - 0.01 *(rand(numberofneurons,1)-0.5); %driving current for inhibitory cells similar in PFC and IPL
-    Iext_Inh_PV = 1.49 - 0.0 *(rand(numberofneurons,1));
-    Iext_response = 1.5 - 0.01 *(rand(numberofneurons,1));
 
     % initialize noise input-----------------------------------------------
     I_noise_md = zeros(numberofneurons,length(T));
@@ -1244,9 +1245,28 @@ for rr= 1:total_trial_num
 end
 
 
+save("spike_time", ...
+    'full_PFC_S_BT', ...
+    'full_PFC_S_RC', ...
+    'full_PFC_S_GC', ...
+    'full_PFC_S_YT', ...
+    'full_PFC_D_BT', ...
+    'full_PFC_D_RC', ...
+    'full_PFC_D_GC', ...
+    'full_PFC_D_YT', ...
+    'full_VA_shape', ...
+    'full_VA_ori', ...
+    'full_MD_shape', ...
+    'full_MD_ori', ...
+    'full_PFC_remote_shape', ...
+    'full_PFC_remote_ori', ...
+    'full_VA_shape_num', ...
+    'full_MD_shape_num', ...
+    'full_PFC_remote_shape_num');
+
 
 %%
-neuron_id = 1;
+neuron_id = 21;
 PFC_S_BT = zeros(total_trial_num, length(T));
 PFC_S_RC = zeros(total_trial_num, length(T));
 PFC_S_GC = zeros(total_trial_num, length(T));
@@ -1390,8 +1410,9 @@ hold on
 plot(pPFC_firing_rate_timeseries, 'r'), xlim([st, final])
 legend('VA', 'MD', 'PFC remote')
 
+
 %%
-trial_num = 1;
+trial_num = 4;
 
 t_PFC_S_BT = zeros(numberofneurons, length(T));
 t_PFC_S_RC = zeros(numberofneurons, length(T));
@@ -1475,7 +1496,7 @@ subplot(4,1,4)
 spy(t_PFC_S_YT,8,'b'),title('PFC Superficial yellow triangle', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 %
-figure (3)
+figure (2)
 subplot(4,1,1)
 spy( t_PFC_D_BT,8,'k'),title('PFC Deep blue triangle', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
@@ -1491,7 +1512,7 @@ spy( t_PFC_D_YT,8,'k'),title('PFC Deep yellow triangle', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 
-figure( 2)
+figure(3)
 subplot(3,1,1)
 spy( t_VA_shape,8,'k'),title('VA Thalamus Shape', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
