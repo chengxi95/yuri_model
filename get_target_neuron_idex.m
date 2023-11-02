@@ -20,7 +20,7 @@ function neuron_index_list = get_target_neuron_idex(firing_mat, base_start, base
     firing_ratio = test_firing_num./(baseline_firing_num + 1);
 
     % find the bin with most number of neurons
-    [bin_count, bin_edges] = histcounts(firing_ratio);
+    [bin_count, bin_edges] = histcounts(firing_ratio(firing_ratio~=0));
     [max_count, max_index] = max(bin_count);
 
     bin_start = bin_edges(max_index);
