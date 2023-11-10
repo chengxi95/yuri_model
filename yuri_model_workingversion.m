@@ -15,11 +15,12 @@ numberofneurons = 50;% number of neurons per group
 %   Time constants
 tha = 20; %time constant
 
-total_trial_num = 1;
+total_trial_num = 10;
 
 % 1:BT, 2:RC, 3:GC, 4:YT
-stimulation_type = 3; 
+stimulation_type = 4; 
 
+fs_strength = 0.04; % [0.08]
 
 gauss_width= 100;
  
@@ -183,6 +184,11 @@ W11=2; W12=0.8; W13=0.2; W14= 0.2;
 W21=0.8; W22=2; W23=0.2; W24= 0.2;
 W31=0.2; W32=0.2; W33=2; W34= 0.8;
 W41=0.2; W42=0.2; W43=0.8; W44= 2;
+
+% W11=2; W12=0.6; W13=0.2; W14= 0.2;
+% W21=0.6; W22=2; W23=0.2; W24= 0.2;
+% W31=0.2; W32=0.2; W33=2; W34= 0.6;
+% W41=0.2; W42=0.2; W43=0.6; W44= 2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % %   Superficial-layers connectivity
 % W_D_toremote = 0.002;
@@ -575,7 +581,7 @@ for rr= 1:total_trial_num
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PFC deep  to MD 
 % SHAPE 
         PFC_MD_initial_coef= 5;
-         PFC_MD_secondary_coef= 3;
+        PFC_MD_secondary_coef= 3;
         Isyn_PFC_D_MD_shape(:,i+ MD_delay) = Isyn_PFC_D_MD_shape(:,i+ MD_delay) + PFC_MD_initial_coef * W_PFC_MD .* sum(((i-last_spike_PFC_D_BT<spikewidth) & (i-last_spike_PFC_D_BT>0) & (Matrix_DPFC_to_MD ~= 0)), 1).';
         
         Isyn_PFC_D_MD_shape(:,i+ MD_delay) = Isyn_PFC_D_MD_shape(:,i+ MD_delay) + PFC_MD_initial_coef * W_PFC_MD .* sum(((i-last_spike_PFC_D_RC<spikewidth) & (i-last_spike_PFC_D_RC>0) & (Matrix_DPFC_to_MD ~= 0)), 1).';
@@ -597,7 +603,7 @@ for rr= 1:total_trial_num
     
             Isyn_VA_Matrix_to_PFC_exc_shape(:,i+ delay) = Isyn_VA_Matrix_to_PFC_exc_shape(:,i+ delay) +  2*W_VA_exi .* sum(((i-last_spike_VA_matrix_shape<spikewidth) & (i-last_spike_VA_matrix_shape>0) & (matrix_VA_to_rule ~= 0)), 1).';
             
-            Isyn_VA_Matrix_to_PFC_exc_orientation(:,i+ delay) = Isyn_VA_Matrix_to_PFC_exc_orientation(:,i+ delay) +  W_VA_exi .* sum(((i-last_spike_VA_matrix_Orientation<spikewidth) & (i-last_spike_VA_matrix_Orientation>0) & (matrix_VA_to_rule ~= 0)), 1).';
+            Isyn_VA_Matrix_to_PFC_exc_orientation(:,i+ delay) = Isyn_VA_Matrix_to_PFC_exc_orientation(:,i+ delay) +  2*W_VA_exi .* sum(((i-last_spike_VA_matrix_Orientation<spikewidth) & (i-last_spike_VA_matrix_Orientation>0) & (matrix_VA_to_rule ~= 0)), 1).';
     
             Isyn_VA_Matrix_to_PFC(sum(((i-last_spike_VA_matrix_Orientation<spikewidth_VA) & (i-last_spike_VA_matrix_Orientation>0)) .* matrix_MD_to_Crtex, 1)~=0,i+ delay) = Matrix_amplification;
     
@@ -666,9 +672,9 @@ for rr= 1:total_trial_num
             Isyn_MD_ori_to_Inh(:,i+ delay) = Isyn_MD_ori_to_Inh(:,i+ delay) + W_MD_inh .* sum(((i-last_spike_MD_ori<spikewidth_VA) & (i-last_spike_MD_ori>0)), 1).';
         end
 
-        Isyn_FS_shape(:, i + delay) =  Isyn_FS_shape(:, i + delay) + 0.05* W_IPL_Inh_to_exc_fs.*sum(((i-last_spike_FS_shape < spikewidth_inh) & (i-last_spike_FS_shape > 0)).*(exp(((i-last_spike_FS_shape < spikewidth_inh) & (i-last_spike_FS_shape > 0)).*(1-(i-last_spike_FS_shape-delay)).*2./spikewidth_inh)), 1);
+        Isyn_FS_shape(:, i + delay) =  Isyn_FS_shape(:, i + delay) + fs_strength * W_IPL_Inh_to_exc_fs.*sum(((i-last_spike_FS_shape < spikewidth_inh) & (i-last_spike_FS_shape > 0)).*(exp(((i-last_spike_FS_shape < spikewidth_inh) & (i-last_spike_FS_shape > 0)).*(1-(i-last_spike_FS_shape-delay)).*2./spikewidth_inh)), 1);
 
-        Isyn_FS_ori(:, i + delay) =  Isyn_FS_ori(:, i + delay) + 0.05 * W_IPL_Inh_to_exc_fs.*sum(((i-last_spike_FS_ori < spikewidth_inh) & (i-last_spike_FS_ori > 0)).*(exp(((i-last_spike_FS_ori < spikewidth_inh) & (i-last_spike_FS_ori > 0)).*(1-(i-last_spike_FS_ori-delay)).*2./spikewidth_inh)), 1);
+        Isyn_FS_ori(:, i + delay) =  Isyn_FS_ori(:, i + delay) + fs_strength * W_IPL_Inh_to_exc_fs.*sum(((i-last_spike_FS_ori < spikewidth_inh) & (i-last_spike_FS_ori > 0)).*(exp(((i-last_spike_FS_ori < spikewidth_inh) & (i-last_spike_FS_ori > 0)).*(1-(i-last_spike_FS_ori-delay)).*2./spikewidth_inh)), 1);
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% local excitatory input to
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% shape cells 
@@ -1487,20 +1493,20 @@ for i = 1:total_trial_num
     temp = full_VA_shape{i};
     VA_shape(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
 
-    % temp = full_VA_ori{i};
-    % VA_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    temp = full_VA_ori{i};
+    VA_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
 
     temp = full_PFC_remote_shape{i};
     PFC_remote_shape(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
 
-    % temp = full_PFC_remote_ori{i};
-    % PFC_remote_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    temp = full_PFC_remote_ori{i};
+    PFC_remote_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
 
     temp = full_MD_shape{i};
     MD_shape(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
 
-    % temp = full_MD_ori{i};
-    % MD_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    temp = full_MD_ori{i};
+    MD_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
 end
 
 figure(1)
