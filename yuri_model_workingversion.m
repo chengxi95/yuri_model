@@ -1,4 +1,4 @@
-
+ 
 close all;
 clear all;
 % rng('default')
@@ -15,12 +15,12 @@ numberofneurons = 50;% number of neurons per group
 %   Time constants
 tha = 20; %time constant
 
-total_trial_num = 10;
+total_trial_num = 1;
 
 % 1:BT, 2:RC, 3:GC, 4:YT
-stimulation_type = 4; 
+stimulation_type = 1; 
 
-fs_strength = 0.04; % [0.08]
+fs_strength = 0.5; % [0.04, ]
 
 gauss_width= 100;
  
@@ -96,6 +96,7 @@ full_PFC_remote_shape_num = zeros(total_trial_num, length(T));
 abs_pfc_width = 1.5;% cortical input liftime
 spikewidth = abs_pfc_width/dt;
 spikewidth_inh = 100/dt; % assumed that inhibition effect is prolonged due to the synch exc input SOM neurons
+spikewidth_inh_FS= 1000/dt; 
 spikewidth_VA = 100/dt;
 spikewidth_MD = spikewidth;
 %   Connectivity Map: local PFC and PRL connectivity = all to all connectivity
@@ -180,10 +181,10 @@ matrix_local_S_D(1:10, 1:10) = 2*W_S_D;
 
 %%%%%%%%%%%%%%%%%
 %connections from superficial layer to the deep layer
-W11=2; W12=0.8; W13=0.2; W14= 0.2;
-W21=0.8; W22=2; W23=0.2; W24= 0.2;
-W31=0.2; W32=0.2; W33=2; W34= 0.8;
-W41=0.2; W42=0.2; W43=0.8; W44= 2;
+W11=2; W12=0.2; W13=0.2; W14= 0.2;
+W21=0.2; W22=2; W23=0.2; W24= 0.2;
+W31=0.2; W32=0.2; W33=2; W34= 0.2;
+W41=0.2; W42=0.2; W43=0.2; W44= 2;
 
 % W11=2; W12=0.6; W13=0.2; W14= 0.2;
 % W21=0.6; W22=2; W23=0.2; W24= 0.2;
@@ -232,7 +233,7 @@ W_IPL_Inh_to_exc_pv = 0.01;%25;%synaptic weight
 W_IPL_Inh_to_exc_fs= 0.005;%25;%synaptic weight
 
 W_VA_exi = 0.005;
-W_MD_inh = 0.003;
+W_MD_inh = 0.0005; % [, 0.001]
 W_MD_PFC = 0.012;
 
 
@@ -672,9 +673,9 @@ for rr= 1:total_trial_num
             Isyn_MD_ori_to_Inh(:,i+ delay) = Isyn_MD_ori_to_Inh(:,i+ delay) + W_MD_inh .* sum(((i-last_spike_MD_ori<spikewidth_VA) & (i-last_spike_MD_ori>0)), 1).';
         end
 
-        Isyn_FS_shape(:, i + delay) =  Isyn_FS_shape(:, i + delay) + fs_strength * W_IPL_Inh_to_exc_fs.*sum(((i-last_spike_FS_shape < spikewidth_inh) & (i-last_spike_FS_shape > 0)).*(exp(((i-last_spike_FS_shape < spikewidth_inh) & (i-last_spike_FS_shape > 0)).*(1-(i-last_spike_FS_shape-delay)).*2./spikewidth_inh)), 1);
+        Isyn_FS_shape(:, i + delay) =  Isyn_FS_shape(:, i + delay) + fs_strength * W_IPL_Inh_to_exc_fs.*sum(((i-last_spike_FS_shape < spikewidth_inh_FS) & (i-last_spike_FS_shape > 0)).*(exp(((i-last_spike_FS_shape < spikewidth_inh_FS) & (i-last_spike_FS_shape > 0)).*(1-(i-last_spike_FS_shape-delay)).*2./spikewidth_inh_FS)), 1);
 
-        Isyn_FS_ori(:, i + delay) =  Isyn_FS_ori(:, i + delay) + fs_strength * W_IPL_Inh_to_exc_fs.*sum(((i-last_spike_FS_ori < spikewidth_inh) & (i-last_spike_FS_ori > 0)).*(exp(((i-last_spike_FS_ori < spikewidth_inh) & (i-last_spike_FS_ori > 0)).*(1-(i-last_spike_FS_ori-delay)).*2./spikewidth_inh)), 1);
+        Isyn_FS_ori(:, i + delay) =  Isyn_FS_ori(:, i + delay) + fs_strength * W_IPL_Inh_to_exc_fs.*sum(((i-last_spike_FS_ori < spikewidth_inh_FS) & (i-last_spike_FS_ori > 0)).*(exp(((i-last_spike_FS_ori < spikewidth_inh_FS) & (i-last_spike_FS_ori > 0)).*(1-(i-last_spike_FS_ori-delay)).*2./spikewidth_inh_FS)), 1);
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% local excitatory input to
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% shape cells 
@@ -1445,7 +1446,7 @@ save("spike_time", ...
 
 
 %%
-neuron_id = 1;
+neuron_id = 20;
 PFC_S_BT = zeros(total_trial_num, length(T));
 PFC_S_RC = zeros(total_trial_num, length(T));
 PFC_S_GC = zeros(total_trial_num, length(T));
@@ -1742,6 +1743,16 @@ subplot(6,1,6)
 spy( t_MD_ori,8,'k'),title('MD ori', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
+
+figure(7)
+subplot(2,1,1)
+spy( y_FS_inh_ori       >-50,8,'b'),title('FS_inh_ori ', 'FontSize', 16)
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+subplot(2,1,2)
+spy( y_FS_inh_shape>-50,8,'r'),title('FS_inh_shape cells', 'FontSize', 16)
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+
+
 %%
 % save("good_initial", ...
 %     'Iext_SPFC_YT', ...
@@ -1837,12 +1848,7 @@ subplot(5,1,3)
 spy( y_VA_matrix_shape>-50,8,'k'),title('VA Thalamus Shape', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 subplot(5,1,4)
-spy( y_VA_matrix_Orientation>-50,8,'b'),title('VA Thalamus Orientation', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-subplot(5,1,5)
-spy( y_PV_inh>-50,8,'r'),title('inhibitory PFC cells', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-
+close all
 
 
 %
