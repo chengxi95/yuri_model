@@ -15,7 +15,7 @@ numberofneurons = 50;% number of neurons per group
 %   Time constants
 tha = 20; %time constant
 
-total_trial_num = 1;
+total_trial_num = 5;
 
 % 1:BT, 2:RC, 3:GC, 4:YT
 stimulation_type = 1; 
@@ -598,50 +598,46 @@ for rr= 1:total_trial_num
         Isyn_PFC_D_MD_ori(:,i+ 10*MD_delay) = Isyn_PFC_D_MD_ori(:,i+ 10*MD_delay) + PFC_MD_secondary_coef *W_PFC_MD .* sum(((i-last_spike_PFC_remote_Orientation<spikewidth) & (i-last_spike_PFC_remote_Orientation>0) & (Matrix_PFC_to_MD ~= 0)), 1).';
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% VA thalamus to cortex 
-        if ~VA_off
+        
     
-            Isyn_VA_Matrix_to_PFC(sum(((i-last_spike_VA_matrix_shape<spikewidth_VA) & (i-last_spike_VA_matrix_shape>0)) .* matrix_MD_to_Crtex, 1)~=0,i+ delay) = Matrix_amplification;
-    
-            Isyn_VA_Matrix_to_PFC_exc_shape(:,i+ delay) = Isyn_VA_Matrix_to_PFC_exc_shape(:,i+ delay) +  2*W_VA_exi .* sum(((i-last_spike_VA_matrix_shape<spikewidth) & (i-last_spike_VA_matrix_shape>0) & (matrix_VA_to_rule ~= 0)), 1).';
-            
-            Isyn_VA_Matrix_to_PFC_exc_orientation(:,i+ delay) = Isyn_VA_Matrix_to_PFC_exc_orientation(:,i+ delay) +  2*W_VA_exi .* sum(((i-last_spike_VA_matrix_Orientation<spikewidth) & (i-last_spike_VA_matrix_Orientation>0) & (matrix_VA_to_rule ~= 0)), 1).';
-    
-            Isyn_VA_Matrix_to_PFC(sum(((i-last_spike_VA_matrix_Orientation<spikewidth_VA) & (i-last_spike_VA_matrix_Orientation>0)) .* matrix_MD_to_Crtex, 1)~=0,i+ delay) = Matrix_amplification;
-    
-            % VA to Inh 
-    
-            Isyn_VA_Matrix_to_Inh(:,i+ delay) = Isyn_VA_Matrix_to_Inh(:,i+ delay) +  W_PFC_to_str .* sum((i-last_spike_VA_matrix_shape<spikewidth) & (i-last_spike_VA_matrix_shape>0), 1).';
-            Isyn_VA_Matrix_to_Inh(:,i+ delay) = Isyn_VA_Matrix_to_Inh(:,i+ delay) +  W_PFC_to_str .* sum((i-last_spike_VA_matrix_Orientation<spikewidth) & (i-last_spike_VA_matrix_Orientation>0), 1).';
+        Isyn_VA_Matrix_to_PFC(sum(((i-last_spike_VA_matrix_shape<spikewidth_VA) & (i-last_spike_VA_matrix_shape>0)) .* matrix_MD_to_Crtex, 1)~=0,i+ delay) = Matrix_amplification;
 
-        end
+        Isyn_VA_Matrix_to_PFC_exc_shape(:,i+ delay) = Isyn_VA_Matrix_to_PFC_exc_shape(:,i+ delay) +  2*W_VA_exi .* sum(((i-last_spike_VA_matrix_shape<spikewidth) & (i-last_spike_VA_matrix_shape>0) & (matrix_VA_to_rule ~= 0)), 1).';
+        
+        Isyn_VA_Matrix_to_PFC_exc_orientation(:,i+ delay) = Isyn_VA_Matrix_to_PFC_exc_orientation(:,i+ delay) +  2*W_VA_exi .* sum(((i-last_spike_VA_matrix_Orientation<spikewidth) & (i-last_spike_VA_matrix_Orientation>0) & (matrix_VA_to_rule ~= 0)), 1).';
+
+        Isyn_VA_Matrix_to_PFC(sum(((i-last_spike_VA_matrix_Orientation<spikewidth_VA) & (i-last_spike_VA_matrix_Orientation>0)) .* matrix_MD_to_Crtex, 1)~=0,i+ delay) = Matrix_amplification;
+
+        % VA to Inh 
+
+        Isyn_VA_Matrix_to_Inh(:,i+ delay) = Isyn_VA_Matrix_to_Inh(:,i+ delay) +  W_PFC_to_str .* sum((i-last_spike_VA_matrix_shape<spikewidth) & (i-last_spike_VA_matrix_shape>0), 1).';
+        Isyn_VA_Matrix_to_Inh(:,i+ delay) = Isyn_VA_Matrix_to_Inh(:,i+ delay) +  W_PFC_to_str .* sum((i-last_spike_VA_matrix_Orientation<spikewidth) & (i-last_spike_VA_matrix_Orientation>0), 1).';
+
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MD to PFC 
 
         %SHAPE
 
-        if ~MD_off
+        Isyn_MD_shape_to_PFC(:,i+ 8*MD_delay) = Isyn_MD_shape_to_PFC(:,i+ 8*MD_delay) +  0.3*W_MD_PFC .* sum(((i-last_spike_MD_shape<spikewidth_MD) & (i-last_spike_MD_shape>0) & (Matrix_MD_to_PFC ~= 0)), 1).'; 
 
-            Isyn_MD_shape_to_PFC(:,i+ 8*MD_delay) = Isyn_MD_shape_to_PFC(:,i+ 8*MD_delay) +  0.3*W_MD_PFC .* sum(((i-last_spike_MD_shape<spikewidth_MD) & (i-last_spike_MD_shape>0) & (Matrix_MD_to_PFC ~= 0)), 1).'; 
-    
-            Isyn_MD_shape_to_random_PFC_BT(:,i+ delay) = Isyn_MD_shape_to_random_PFC_BT(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_shape<spikewidth_MD) & (i-last_spike_MD_shape>0) & (Matrix_random_MD_PFC_BT ~= 0)), 1).'; 
-    
-            Isyn_MD_shape_to_random_PFC_RC(:,i+ delay) = Isyn_MD_shape_to_random_PFC_RC(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_shape<spikewidth_MD) & (i-last_spike_MD_shape>0) & (Matrix_random_MD_PFC_RC ~= 0)), 1).'; 
-    
-            Isyn_MD_shape_to_random_PFC_GC(:,i+ delay) = Isyn_MD_shape_to_random_PFC_GC(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_shape<spikewidth_MD) & (i-last_spike_MD_shape>0) & (Matrix_random_MD_PFC_GC ~= 0)), 1).'; 
-    
-            Isyn_MD_shape_to_random_PFC_YT(:,i+ delay) = Isyn_MD_shape_to_random_PFC_YT(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_shape<spikewidth_MD) & (i-last_spike_MD_shape>0) & (Matrix_random_MD_PFC_YT ~= 0)), 1).'; 
+        Isyn_MD_shape_to_random_PFC_BT(:,i+ delay) = Isyn_MD_shape_to_random_PFC_BT(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_shape<spikewidth_MD) & (i-last_spike_MD_shape>0) & (Matrix_random_MD_PFC_BT ~= 0)), 1).'; 
 
-            Isyn_MD_ori_to_PFC(:,i+ 8*MD_delay) = Isyn_MD_ori_to_PFC(:,i+ 8*MD_delay) +  0.3*W_MD_PFC .* sum(((i-last_spike_MD_ori<spikewidth_MD) & (i-last_spike_MD_ori>0) & (Matrix_MD_to_PFC ~= 0)), 1).'; 
-            
-            Isyn_MD_orientation_to_random_PFC_BT(:,i+ delay) = Isyn_MD_orientation_to_random_PFC_BT(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_ori<spikewidth_MD) & (i-last_spike_MD_ori>0) & (Matrix_random_MD_PFC_BT ~= 0)), 1).'; 
-    
-            Isyn_MD_orientation_to_random_PFC_RC(:,i+ delay) = Isyn_MD_orientation_to_random_PFC_RC(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_ori<spikewidth_MD) & (i-last_spike_MD_ori>0) & (Matrix_random_MD_PFC_RC ~= 0)), 1).'; 
-    
-            Isyn_MD_orientation_to_random_PFC_GC(:,i+ delay) = Isyn_MD_orientation_to_random_PFC_GC(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_ori<spikewidth_MD) & (i-last_spike_MD_ori>0) & (Matrix_random_MD_PFC_GC ~= 0)), 1).'; 
-    
-            Isyn_MD_orientation_to_random_PFC_YT(:,i+ delay) = Isyn_MD_orientation_to_random_PFC_YT(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_ori<spikewidth_MD) & (i-last_spike_MD_ori>0) & (Matrix_random_MD_PFC_YT ~= 0)), 1).'; 
+        Isyn_MD_shape_to_random_PFC_RC(:,i+ delay) = Isyn_MD_shape_to_random_PFC_RC(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_shape<spikewidth_MD) & (i-last_spike_MD_shape>0) & (Matrix_random_MD_PFC_RC ~= 0)), 1).'; 
+
+        Isyn_MD_shape_to_random_PFC_GC(:,i+ delay) = Isyn_MD_shape_to_random_PFC_GC(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_shape<spikewidth_MD) & (i-last_spike_MD_shape>0) & (Matrix_random_MD_PFC_GC ~= 0)), 1).'; 
+
+        Isyn_MD_shape_to_random_PFC_YT(:,i+ delay) = Isyn_MD_shape_to_random_PFC_YT(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_shape<spikewidth_MD) & (i-last_spike_MD_shape>0) & (Matrix_random_MD_PFC_YT ~= 0)), 1).'; 
+
+        Isyn_MD_ori_to_PFC(:,i+ 8*MD_delay) = Isyn_MD_ori_to_PFC(:,i+ 8*MD_delay) +  0.3*W_MD_PFC .* sum(((i-last_spike_MD_ori<spikewidth_MD) & (i-last_spike_MD_ori>0) & (Matrix_MD_to_PFC ~= 0)), 1).'; 
+        
+        Isyn_MD_orientation_to_random_PFC_BT(:,i+ delay) = Isyn_MD_orientation_to_random_PFC_BT(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_ori<spikewidth_MD) & (i-last_spike_MD_ori>0) & (Matrix_random_MD_PFC_BT ~= 0)), 1).'; 
+
+        Isyn_MD_orientation_to_random_PFC_RC(:,i+ delay) = Isyn_MD_orientation_to_random_PFC_RC(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_ori<spikewidth_MD) & (i-last_spike_MD_ori>0) & (Matrix_random_MD_PFC_RC ~= 0)), 1).'; 
+
+        Isyn_MD_orientation_to_random_PFC_GC(:,i+ delay) = Isyn_MD_orientation_to_random_PFC_GC(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_ori<spikewidth_MD) & (i-last_spike_MD_ori>0) & (Matrix_random_MD_PFC_GC ~= 0)), 1).'; 
+
+        Isyn_MD_orientation_to_random_PFC_YT(:,i+ delay) = Isyn_MD_orientation_to_random_PFC_YT(:,i+ delay) +  W_MD_PFC .* sum(((i-last_spike_MD_ori<spikewidth_MD) & (i-last_spike_MD_ori>0) & (Matrix_random_MD_PFC_YT ~= 0)), 1).'; 
 
 
-        end
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PFC deep  to ST 
 
@@ -667,11 +663,9 @@ for rr= 1:total_trial_num
             Isyn_PV(:, i + delay) =  Isyn_PV(:, i + delay) + W_IPL_Inh_to_exc_pv.*sum(((i-last_spike_PV < spikewidth_inh) & (i-last_spike_PV > 0)).*(exp(((i-last_spike_PV < spikewidth_inh) & (i-last_spike_PV > 0)).*(1-(i-last_spike_PV-delay)).*2./spikewidth_inh)), 1);
         end
 
-        if ~MD_off
-            Isyn_MD_shape_to_Inh(:,i+ delay) = Isyn_MD_shape_to_Inh(:,i+ delay) + W_MD_inh .* sum(((i-last_spike_MD_shape<spikewidth_VA) & (i-last_spike_MD_shape>0)), 1).';
+        Isyn_MD_shape_to_Inh(:,i+ delay) = Isyn_MD_shape_to_Inh(:,i+ delay) + W_MD_inh .* sum(((i-last_spike_MD_shape<spikewidth_VA) & (i-last_spike_MD_shape>0)), 1).';
 
-            Isyn_MD_ori_to_Inh(:,i+ delay) = Isyn_MD_ori_to_Inh(:,i+ delay) + W_MD_inh .* sum(((i-last_spike_MD_ori<spikewidth_VA) & (i-last_spike_MD_ori>0)), 1).';
-        end
+        Isyn_MD_ori_to_Inh(:,i+ delay) = Isyn_MD_ori_to_Inh(:,i+ delay) + W_MD_inh .* sum(((i-last_spike_MD_ori<spikewidth_VA) & (i-last_spike_MD_ori>0)), 1).';
 
         Isyn_FS_shape(:, i + delay) =  Isyn_FS_shape(:, i + delay) + fs_strength * W_IPL_Inh_to_exc_fs.*sum(((i-last_spike_FS_shape < spikewidth_inh_FS) & (i-last_spike_FS_shape > 0)).*(exp(((i-last_spike_FS_shape < spikewidth_inh_FS) & (i-last_spike_FS_shape > 0)).*(1-(i-last_spike_FS_shape-delay)).*2./spikewidth_inh_FS)), 1);
 
@@ -935,134 +929,137 @@ for rr= 1:total_trial_num
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % VA matrix cells 
-            n1 = rand;
-            noise_prob_md = noise_prob_PFC;
-            if n1<noise_prob_md
-                I_noise_VA(j,i) = noise_amp;
-            else
-                I_noise_VA(j,i) = 0;
-            end
-
-            %matrix VA cells
-            if (last_spike_VA_matrix_shape(j)~=10^10 && (i-last_spike_VA_matrix_shape(j))>tref)
-
-                y_VA_matrix_shape(j,i) = y_VA_matrix_shape(j,i-1)+((E_L-y_VA_matrix_shape(j,i-1))/tha)*dt+(Iext_VA(j)+ I_noise_VA(j,i)+ Isyn_aPFC_D5(j, i) - Isyn_SNpr_to_VA(j,i))*dt*(RM/tha);%
-
-            elseif last_spike_VA_matrix_shape(j)==10^10
-
-                y_VA_matrix_shape(j,i) = y_VA_matrix_shape(j,i-1)+((E_L-y_VA_matrix_shape(j,i-1))/tha)*dt+(Iext_VA(j)+ I_noise_VA(j,i)+ Isyn_aPFC_D5(j, i) - Isyn_SNpr_to_VA(j,i))*dt*(RM/tha);%
-
-            else
-
-                y_VA_matrix_shape(j,i)=E_L;
-
-            end
-
-            if y_VA_matrix_shape(j,i)>=v_th
-                last_spike_VA_matrix_shape(j)=i;
-                y_VA_matrix_shape(j,i)=0;
-%                 spiketimes_VA=[spiketimes_VA;i,j];
-
-            end
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % % VA matrix cells connecting aPFC to pPFC
-            n1 = rand;
-            noise_prob_md = noise_prob_PFC;
-            if n1<noise_prob_md
-                I_noise_VA(j,i) = noise_amp;
-            else
-                I_noise_VA(j,i) = 0;
-            end
-
-            %matrix MD  cells
-            if (last_spike_VA_matrix_Orientation(j)~=10^10 && (i-last_spike_VA_matrix_Orientation(j))>tref)
-
-                y_VA_matrix_Orientation (j,i) = y_VA_matrix_Orientation (j,i-1)+((E_L-y_VA_matrix_Orientation (j,i-1))/tha)*dt+(Iext_VA(j)+ I_noise_VA(j,i)+ Isyn_aPFC_D5_orientation(j, i) - Isyn_SNpr_to_VA(j,i))*dt*(RM/tha);%
-
-            elseif last_spike_VA_matrix_Orientation(j)==10^10
-
-                y_VA_matrix_Orientation (j,i) = y_VA_matrix_Orientation (j,i-1)+((E_L-y_VA_matrix_Orientation (j,i-1))/tha)*dt+(Iext_VA(j)+ I_noise_VA(j,i)+ Isyn_aPFC_D5_orientation(j, i) - Isyn_SNpr_to_VA(j,i))*dt*(RM/tha);%
-
-            else
-
-                y_VA_matrix_Orientation (j,i)=E_L;
-
-            end
-
-            if y_VA_matrix_Orientation (j,i)>=v_th
-                last_spike_VA_matrix_Orientation(j)=i;
-                y_VA_matrix_Orientation (j,i)=0;
-%                 spiketimes_VA_shape=[spiketimes_VA_shape;i,j];
-
+            if ~VA_off
+                n1 = rand;
+                noise_prob_md = noise_prob_PFC;
+                if n1<noise_prob_md
+                    I_noise_VA(j,i) = noise_amp;
+                else
+                    I_noise_VA(j,i) = 0;
+                end
+    
+                %matrix VA cells
+                if (last_spike_VA_matrix_shape(j)~=10^10 && (i-last_spike_VA_matrix_shape(j))>tref)
+    
+                    y_VA_matrix_shape(j,i) = y_VA_matrix_shape(j,i-1)+((E_L-y_VA_matrix_shape(j,i-1))/tha)*dt+(Iext_VA(j)+ I_noise_VA(j,i)+ Isyn_aPFC_D5(j, i) - Isyn_SNpr_to_VA(j,i))*dt*(RM/tha);%
+    
+                elseif last_spike_VA_matrix_shape(j)==10^10
+    
+                    y_VA_matrix_shape(j,i) = y_VA_matrix_shape(j,i-1)+((E_L-y_VA_matrix_shape(j,i-1))/tha)*dt+(Iext_VA(j)+ I_noise_VA(j,i)+ Isyn_aPFC_D5(j, i) - Isyn_SNpr_to_VA(j,i))*dt*(RM/tha);%
+    
+                else
+    
+                    y_VA_matrix_shape(j,i)=E_L;
+    
+                end
+    
+                if y_VA_matrix_shape(j,i)>=v_th
+                    last_spike_VA_matrix_shape(j)=i;
+                    y_VA_matrix_shape(j,i)=0;
+    %                 spiketimes_VA=[spiketimes_VA;i,j];
+    
+                end
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                % % VA matrix cells connecting aPFC to pPFC
+                n1 = rand;
+                noise_prob_md = noise_prob_PFC;
+                if n1<noise_prob_md
+                    I_noise_VA(j,i) = noise_amp;
+                else
+                    I_noise_VA(j,i) = 0;
+                end
+    
+                %matrix MD  cells
+                if (last_spike_VA_matrix_Orientation(j)~=10^10 && (i-last_spike_VA_matrix_Orientation(j))>tref)
+    
+                    y_VA_matrix_Orientation (j,i) = y_VA_matrix_Orientation (j,i-1)+((E_L-y_VA_matrix_Orientation (j,i-1))/tha)*dt+(Iext_VA(j)+ I_noise_VA(j,i)+ Isyn_aPFC_D5_orientation(j, i) - Isyn_SNpr_to_VA(j,i))*dt*(RM/tha);%
+    
+                elseif last_spike_VA_matrix_Orientation(j)==10^10
+    
+                    y_VA_matrix_Orientation (j,i) = y_VA_matrix_Orientation (j,i-1)+((E_L-y_VA_matrix_Orientation (j,i-1))/tha)*dt+(Iext_VA(j)+ I_noise_VA(j,i)+ Isyn_aPFC_D5_orientation(j, i) - Isyn_SNpr_to_VA(j,i))*dt*(RM/tha);%
+    
+                else
+    
+                    y_VA_matrix_Orientation (j,i)=E_L;
+    
+                end
+    
+                if y_VA_matrix_Orientation (j,i)>=v_th
+                    last_spike_VA_matrix_Orientation(j)=i;
+                    y_VA_matrix_Orientation (j,i)=0;
+    %                 spiketimes_VA_shape=[spiketimes_VA_shape;i,j];
+    
+                end
             end
 
               %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % % Core MD cells amplifying pPFC connections
-            n1 = rand;
-            noise_prob_md = noise_prob_PFC;
-            if n1<noise_prob_md
-                I_noise_md_2(j,i) = 0;%noise_amp;
-            else
-                I_noise_md_2(j,i) = 0;
+            if ~MD_off
+                n1 = rand;
+                noise_prob_md = noise_prob_PFC;
+                if n1<noise_prob_md
+                    I_noise_md_2(j,i) = 0;%noise_amp;
+                else
+                    I_noise_md_2(j,i) = 0;
+                end
+    
+    
+                if (last_spike_MD_shape(j)~=10^10 && (i-last_spike_MD_shape(j))>tref)
+    
+                    y_MD_core_shape(j,i) = y_MD_core_shape(j,i-1)+((E_L-y_MD_core_shape(j,i-1))/tha)*dt+(Iext_MD(j)+ I_noise_md_2(j,i)+ Isyn_PFC_D_MD_shape(j,i) )*dt*(RM/tha);%
+    
+                elseif last_spike_MD_shape(j)==10^10
+    
+                    y_MD_core_shape(j,i) = y_MD_core_shape(j,i-1)+((E_L-y_MD_core_shape(j,i-1))/tha)*dt+(Iext_MD(j)+ I_noise_md_2(j,i)+ Isyn_PFC_D_MD_shape(j,i) )*dt*(RM/tha);%
+    
+                else
+    
+                    y_MD_core_shape(j,i) = E_L;
+    
+                end
+    
+                if y_MD_core_shape(j,i) >= v_th
+                    last_spike_MD_shape(j)=i;
+                    y_MD_core_shape(j,i) = 0;
+    %                 spiketimes_MD2=[spiketimes_MD2;i,j];
+    
+                end
+    
+    
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                % % % Core MD cells amplifying aPFC connections
+                n1 = rand;
+                noise_prob_md = noise_prob_PFC;
+                if n1<noise_prob_md
+                    I_noise_md_1(j,i) =0;% noise_amp;
+                else
+                    I_noise_md_1(j,i) = 0;
+                end
+    
+                % md cells to IPL;        DEEP LAYER aPFC drives these
+    
+                if (last_spike_MD_ori(j)~=10^10 && (i-last_spike_MD_ori(j))>tref)
+    
+                    y_MD_core_ori(j,i) = y_MD_core_ori(j,i-1)+((E_L-y_MD_core_ori(j,i-1))/tha)*dt+(Iext_MD(j)+I_noise_md_1(j,i)+ Isyn_PFC_D_MD_ori(j, i) )*dt*(RM/tha);%
+    
+                elseif last_spike_MD_ori(j)==10^10
+    
+                    y_MD_core_ori(j,i) = y_MD_core_ori(j,i-1)+((E_L-y_MD_core_ori(j,i-1))/tha)*dt+(Iext_MD(j)+I_noise_md_1(j,i)+ Isyn_PFC_D_MD_ori(j, i) )*dt*(RM/tha);%
+    
+                else
+    
+                    y_MD_core_ori(j,i)=E_L;
+    
+                end
+    
+                if y_MD_core_ori(j,i)>=v_th
+                    last_spike_MD_ori(j)=i;
+                    y_MD_core_ori(j,i)=0;
+    %                 spiketimes_MD=[spiketimes_MD;i,j];
+    
+                end
+
             end
-
-
-            if (last_spike_MD_shape(j)~=10^10 && (i-last_spike_MD_shape(j))>tref)
-
-                y_MD_core_shape(j,i) = y_MD_core_shape(j,i-1)+((E_L-y_MD_core_shape(j,i-1))/tha)*dt+(Iext_MD(j)+ I_noise_md_2(j,i)+ Isyn_PFC_D_MD_shape(j,i) )*dt*(RM/tha);%
-
-            elseif last_spike_MD_shape(j)==10^10
-
-                y_MD_core_shape(j,i) = y_MD_core_shape(j,i-1)+((E_L-y_MD_core_shape(j,i-1))/tha)*dt+(Iext_MD(j)+ I_noise_md_2(j,i)+ Isyn_PFC_D_MD_shape(j,i) )*dt*(RM/tha);%
-
-            else
-
-                y_MD_core_shape(j,i) = E_L;
-
-            end
-
-            if y_MD_core_shape(j,i) >= v_th
-                last_spike_MD_shape(j)=i;
-                y_MD_core_shape(j,i) = 0;
-%                 spiketimes_MD2=[spiketimes_MD2;i,j];
-
-            end
-
-
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % % % Core MD cells amplifying aPFC connections
-            n1 = rand;
-            noise_prob_md = noise_prob_PFC;
-            if n1<noise_prob_md
-                I_noise_md_1(j,i) =0;% noise_amp;
-            else
-                I_noise_md_1(j,i) = 0;
-            end
-
-            % md cells to IPL;        DEEP LAYER aPFC drives these
-
-            if (last_spike_MD_ori(j)~=10^10 && (i-last_spike_MD_ori(j))>tref)
-
-                y_MD_core_ori(j,i) = y_MD_core_ori(j,i-1)+((E_L-y_MD_core_ori(j,i-1))/tha)*dt+(Iext_MD(j)+I_noise_md_1(j,i)+ Isyn_PFC_D_MD_ori(j, i) )*dt*(RM/tha);%
-
-            elseif last_spike_MD_ori(j)==10^10
-
-                y_MD_core_ori(j,i) = y_MD_core_ori(j,i-1)+((E_L-y_MD_core_ori(j,i-1))/tha)*dt+(Iext_MD(j)+I_noise_md_1(j,i)+ Isyn_PFC_D_MD_ori(j, i) )*dt*(RM/tha);%
-
-            else
-
-                y_MD_core_ori(j,i)=E_L;
-
-            end
-
-            if y_MD_core_ori(j,i)>=v_th
-                last_spike_MD_ori(j)=i;
-                y_MD_core_ori(j,i)=0;
-%                 spiketimes_MD=[spiketimes_MD;i,j];
-
-            end
-
-
 
 
 
@@ -1255,48 +1252,34 @@ for rr= 1:total_trial_num
     % LFP_pPFC_S(rr,:)= smooth(mean(Isyn_pPFC_local_effective)+ mean(Isyn_pPFC_local_effective_2)+mean(Isyn_pPFC_local_effective_3)+ mean(Isyn_aPFC_D_to_Remote_effective)+ mean(Isyn_aPFC_D_to_Remote_effective_2)+ mean(Isyn_aPFC_D_to_Remote_effective_3)+ mean(I_noise_PFC_5)+ mean(I_noise_PFC_4)+ mean(I_noise_PFC_6));
     % LFP_pPFC_D(rr,:)= smooth(mean(Isyn_pPFC_S_to_D_effective)+ mean(Isyn_pPFC_D_effective)+ mean(I_noise_PFC_3));% post-synaptic current in pfc
     % LFP_response(rr,:)= smooth(mean(Isyn_pPFCD_to_response_effective)+ mean(I_noise_PFC));
-        
-    [neuo_id, firing_time] = find(get_firing(y_PFC_S_BT, v_th, 1));
-    full_PFC_S_BT = [full_PFC_S_BT; cat(2, neuo_id, firing_time)];
 
-    [neuo_id, firing_time] = find(get_firing(y_PFC_S_RC, v_th, 1));
-    full_PFC_S_RC = [full_PFC_S_RC; cat(2, neuo_id, firing_time)];
+    full_PFC_S_BT = save_to_cell(y_PFC_S_BT, full_PFC_S_BT, v_th);
 
-    [neuo_id, firing_time] = find(get_firing(y_PFC_S_GC, v_th, 1));
-    full_PFC_S_GC = [full_PFC_S_GC; cat(2, neuo_id, firing_time)];
+    full_PFC_S_RC = save_to_cell(y_PFC_S_RC, full_PFC_S_RC, v_th);
 
-    [neuo_id, firing_time] = find(get_firing(y_PFC_S_YT, v_th, 1));
-    full_PFC_S_YT = [full_PFC_S_YT; cat(2, neuo_id, firing_time)];
+    full_PFC_S_GC = save_to_cell(y_PFC_S_GC, full_PFC_S_GC, v_th);
+
+    full_PFC_S_YT = save_to_cell(y_PFC_S_YT, full_PFC_S_YT, v_th);
     
-    [neuo_id, firing_time] = find(get_firing(y_aPFC_D_BT, v_th, 1));
-    full_PFC_D_BT = [full_PFC_D_BT; cat(2, neuo_id, firing_time)];
+    full_PFC_D_BT = save_to_cell(y_aPFC_D_BT, full_PFC_D_BT, v_th);
 
-    [neuo_id, firing_time] = find(get_firing(y_aPFC_D_RC, v_th, 1));
-    full_PFC_D_RC = [full_PFC_D_RC; cat(2, neuo_id, firing_time)];
+    full_PFC_D_RC = save_to_cell(y_aPFC_D_RC, full_PFC_D_RC, v_th);
 
-    [neuo_id, firing_time] = find(get_firing(y_aPFC_D_GC, v_th, 1));
-    full_PFC_D_GC = [full_PFC_D_GC; cat(2, neuo_id, firing_time)];
+    full_PFC_D_GC = save_to_cell(y_aPFC_D_GC, full_PFC_D_GC, v_th);
 
-    [neuo_id, firing_time] = find(get_firing(y_aPFC_D_YT, v_th, 1));
-    full_PFC_D_YT = [full_PFC_D_YT; cat(2, neuo_id, firing_time)];
+    full_PFC_D_YT = save_to_cell(y_aPFC_D_YT, full_PFC_D_YT, v_th);
     
-    [neuo_id, firing_time] = find(get_firing(y_VA_matrix_shape, v_th, 1));
-    full_VA_shape = [full_VA_shape; cat(2, neuo_id, firing_time)];
+    full_VA_shape = save_to_cell(y_VA_matrix_shape, full_VA_shape, v_th);
 
-    [neuo_id, firing_time] = find(get_firing(y_VA_matrix_Orientation, v_th, 1));
-    full_VA_ori = [full_VA_ori; cat(2, neuo_id, firing_time)];
+    full_VA_ori = save_to_cell(y_VA_matrix_Orientation, full_VA_ori, v_th);
     
-    [neuo_id, firing_time] = find(get_firing(y_MD_core_shape, v_th, 1));
-    full_MD_shape = [full_MD_shape; cat(2, neuo_id, firing_time)];
+    full_MD_shape = save_to_cell(y_MD_core_shape, full_MD_shape, v_th);
      
-    [neuo_id, firing_time] = find(get_firing(y_MD_core_ori, v_th, 1));
-    full_MD_ori = [full_MD_ori; cat(2, neuo_id, firing_time)];
+    full_MD_ori = save_to_cell(y_MD_core_ori, full_MD_ori, v_th);
     
-    [neuo_id, firing_time] = find(get_firing(y_pPFC_Shape, v_th, 1));
-    full_PFC_remote_shape = [full_PFC_remote_shape; cat(2, neuo_id, firing_time)];
+    full_PFC_remote_shape = save_to_cell(y_pPFC_Shape, full_PFC_remote_shape, v_th);
     
-    [neuo_id, firing_time] = find(get_firing(y_pPFC_Orientation, v_th, 1));
-    full_PFC_remote_ori = [full_PFC_remote_ori; cat(2, neuo_id, firing_time)];
+    full_PFC_remote_ori = save_to_cell(y_pPFC_Orientation, full_PFC_remote_ori, v_th);
 
     VA_neuron_index = get_target_neuron_idex(get_firing(y_VA_matrix_shape, v_th, 1));
     MD_neuron_index = get_target_neuron_idex(get_firing(y_MD_core_shape, v_th, 1));
@@ -1468,46 +1451,74 @@ MD_ori = zeros(total_trial_num, length(T));
 
 for i = 1:total_trial_num
     temp = full_PFC_S_BT{i};
-    PFC_S_BT(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
-
+    if ~isnan(temp)
+        PFC_S_BT(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
+    
     temp = full_PFC_S_RC{i};
-    PFC_S_RC(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    if ~isnan(temp)
+        PFC_S_RC(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
 
     temp = full_PFC_S_GC{i};
-    PFC_S_GC(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    if ~isnan(temp)
+        PFC_S_GC(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
 
     temp = full_PFC_S_YT{i};
-    PFC_S_YT(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    if ~isnan(temp)
+        PFC_S_YT(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
 
     temp = full_PFC_D_BT{i};
-    PFC_D_BT(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    if ~isnan(temp)
+        PFC_D_BT(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
 
     temp = full_PFC_D_RC{i};
-    PFC_D_RC(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    if ~isnan(temp)
+        PFC_D_RC(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
 
     temp = full_PFC_D_GC{i};
-    PFC_D_GC(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    if ~isnan(temp)
+        PFC_D_GC(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
 
     temp = full_PFC_D_YT{i};
-    PFC_D_YT(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    if ~isnan(temp)
+        PFC_D_YT(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
 
     temp = full_VA_shape{i};
-    VA_shape(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    if ~isnan(temp)
+        VA_shape(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
 
     temp = full_VA_ori{i};
-    VA_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    if ~isnan(temp)
+        VA_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
 
     temp = full_PFC_remote_shape{i};
-    PFC_remote_shape(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    if ~isnan(temp)
+        PFC_remote_shape(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
 
     temp = full_PFC_remote_ori{i};
-    PFC_remote_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    if ~isnan(temp)
+        PFC_remote_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
 
     temp = full_MD_shape{i};
-    MD_shape(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    if ~isnan(temp)
+        MD_shape(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
 
     temp = full_MD_ori{i};
-    MD_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    if ~isnan(temp)
+        MD_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
+    end
 end
 
 figure(1)
@@ -1592,7 +1603,7 @@ legend('VA', 'MD', 'PFC remote')
 
 
 %%
-trial_num = 1;
+trial_num = 4;
 
 t_PFC_S_BT = zeros(numberofneurons, length(T));
 t_PFC_S_RC = zeros(numberofneurons, length(T));
@@ -1869,14 +1880,14 @@ subplot(5,1,4)
 spy( y_pPFC_Orientation>-50,8,'b'),title('remote PFC Ori', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
-subplot(5,1,5)
-spy( y_FS_inh>-50,8,'r'),title('MD driven FS cells', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+% subplot(5,1,5)
+% spy( y_FS_inh>-50,8,'r'),title('MD driven FS cells', 'FontSize', 16)
+% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 %%
 close all
 
 figure(11)
-spy( y_VA_matrix_shape>-50,8,'k'),title('VA Thalamus Shape', 'FontSize', 16)
+spy( y_VA_matrix_Orientation>-50,8,'k'),title('VA Thalamus Shape', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 hold on 
 spy( y_MD_core_shape>-50,8,'r'),title('MD', 'FontSize', 16)
@@ -1919,6 +1930,12 @@ firing_rate_timeseries=  conv_gaussian(firing_rate_timeseries, srate,gauss_width
 hold on
 
 plot(firing_rate_timeseries, 'r'), xlim([st, final])
+%%
+
+[neuo_id, firing_time] = find(get_firing(y_VA_matrix_Orientation, -50, 1));
+debug = cat(2, neuo_id, firing_time);
+
+%%
 
 
 function firing = get_firing(current, threshold, nanvalue)
@@ -1926,4 +1943,15 @@ function firing = get_firing(current, threshold, nanvalue)
 % window_size: threshold for firing
 % thresh: predefined nan value
     firing = (current > threshold) & (current ~= nanvalue);
+end
+
+function output_cell = save_to_cell(current, cell, thresh)
+    [neuo_id, firing_time] = find(get_firing(current, thresh, 1));
+    disp(neuo_id);
+    disp(firing_time);
+    if isempty(neuo_id)
+        output_cell = [cell, {NaN}];
+    else
+        output_cell = [cell; cat(2, neuo_id, firing_time)];
+    end
 end
