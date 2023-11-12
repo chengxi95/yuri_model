@@ -18,7 +18,7 @@ tha = 20; %time constant
 total_trial_num = 5;
 
 % 1:BT, 2:RC, 3:GC, 4:YT
-stimulation_type = 1; 
+stimulation_type = 4; 
 
 fs_strength = 0.5; % [0.04, ]
 
@@ -27,11 +27,12 @@ gauss_width= 100;
 %   Simulation time
 dt = 0.01; %step size ms
 t_final = 4000; %simulation time ms
+end_time = 3500/dt;
 T = 0:dt:t_final;
 
 % legion test
 VA_off = 0;
-MD_off = 0;
+MD_off = 1;
 pPFC_off = 0;
 PV_off = 0;
 
@@ -61,8 +62,8 @@ tref = 1/dt; % 1 ms refratory time
 % full_MD_shape = [];
 % full_MD_ori = []; 
 % 
-% full_PFC_remote_shape = [];
-% full_PFC_remote_ori = [];
+% full_PFC_shape_ensemble = [];
+% full_PFC_ori_ensemble = [];
 
 full_PFC_S_BT = {}; 
 full_PFC_S_RC = {};
@@ -80,8 +81,8 @@ full_VA_ori = {};
 full_MD_shape = {};
 full_MD_ori = {}; 
 
-full_PFC_remote_shape = {};
-full_PFC_remote_ori = {};
+full_PFC_shape_ensemble = {};
+full_PFC_ori_ensemble = {};
 
 
 % save the total firing number for VA, MD and PFC remote shape to compare
@@ -318,7 +319,7 @@ for rr= 1:total_trial_num
     y_VA_matrix_shape(1:numberofneurons,1)=-55+rand(numberofneurons,1)*1; %initializing the thalamic neurons Voltages
 
     y_VA_matrix_Orientation  = zeros(numberofneurons,length(T));
-    y_VA_matrix_Orientation  =-55+rand(numberofneurons,1)*1; %initializing the thalamic neurons Voltages
+    y_VA_matrix_Orientation(1:numberofneurons,1)  =-55+rand(numberofneurons,1)*1; %initializing the thalamic neurons Voltages
 
 
     y_MD_core_ori = zeros(numberofneurons,length(T));
@@ -598,7 +599,6 @@ for rr= 1:total_trial_num
         Isyn_PFC_D_MD_ori(:,i+ 10*MD_delay) = Isyn_PFC_D_MD_ori(:,i+ 10*MD_delay) + PFC_MD_secondary_coef *W_PFC_MD .* sum(((i-last_spike_PFC_remote_Orientation<spikewidth) & (i-last_spike_PFC_remote_Orientation>0) & (Matrix_PFC_to_MD ~= 0)), 1).';
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% VA thalamus to cortex 
-        
     
         Isyn_VA_Matrix_to_PFC(sum(((i-last_spike_VA_matrix_shape<spikewidth_VA) & (i-last_spike_VA_matrix_shape>0)) .* matrix_MD_to_Crtex, 1)~=0,i+ delay) = Matrix_amplification;
 
@@ -684,13 +684,13 @@ for rr= 1:total_trial_num
 
         for j = 1:numberofneurons
             % create noise
-            n1=rand;
             noise_amp = 10;
-            n1=rand;
+            
             % noise_prob = 0.000005;
             % noise_prob_PFC=0.000005;
             noise_prob = 0.000002;
             noise_prob_PFC=0.000002;
+            n1=rand;
             if n1<noise_prob
                 I_noise_PFC_1(j,i)= noise_amp;
             else
@@ -731,6 +731,14 @@ for rr= 1:total_trial_num
 
             % membrane potential across PFC cells
 
+            n1=rand;
+            if n1<noise_prob
+                I_noise_PFC_1(j,i)= noise_amp;
+            else
+                I_noise_PFC_1(j,i)=0;
+            end
+
+
             if (last_spike_PFC_S_BT(j)~=10^10 && (i-last_spike_PFC_S_BT(j))>tref)
 
                 y_PFC_S_BT(j,i) = y_PFC_S_BT(j,i-1)+leaky_coef*((E_L-y_PFC_S_BT(j,i-1))/tha)*dt+(Iext_SPFC_BT(j)+ Isyn_PFC_M_BT (j, i)+ (Isyn_aPFC_local_BT(j, i) + Isyn_aPFC_local_shared (j,i))* Isyn_VA_Matrix_to_PFC(j, i)+ I_noise_PFC_1(j, i)- Isyn_PV(j, i) + Isyn_MD_shape_to_random_PFC_BT(j,i)+Isyn_MD_orientation_to_random_PFC_BT(j,i))*dt*(RM/tha);%- Isyn_PV(j, i)
@@ -757,6 +765,13 @@ for rr= 1:total_trial_num
 
             % membrane potential across PFC cells
 
+            n1=rand;
+            if n1<noise_prob
+                I_noise_PFC_1(j,i)= noise_amp;
+            else
+                I_noise_PFC_1(j,i)=0;
+            end
+
             if (last_spike_PFC_S_RC(j)~=10^10 && (i-last_spike_PFC_S_RC(j))>tref)
 
                 y_PFC_S_RC(j,i) = y_PFC_S_RC(j,i-1)+ leaky_coef*((E_L-y_PFC_S_RC(j,i-1))/tha)*dt + (Iext_SPFC_RC(j)+ Isyn_PFC_M_RC (j, i)+ (Isyn_aPFC_local_RC(j, i) + Isyn_aPFC_local_shared (j,i))* Isyn_VA_Matrix_to_PFC(j, i)+ I_noise_PFC_1(j, i)- Isyn_PV(j, i) +Isyn_MD_shape_to_random_PFC_RC(j,i)+Isyn_MD_orientation_to_random_PFC_RC(j,i))*dt*(RM/tha);%- Isyn_PV(j, i)
@@ -777,7 +792,13 @@ for rr= 1:total_trial_num
 
             end
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+            
+            n1=rand;
+            if n1<noise_prob
+                I_noise_PFC_1(j,i)= noise_amp;
+            else
+                I_noise_PFC_1(j,i)=0;
+            end
 
             if (last_spike_PFC_S_GC(j)~=10^10 && (i-last_spike_PFC_S_GC(j))>tref)
 
@@ -799,7 +820,13 @@ for rr= 1:total_trial_num
 
             end
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+            
+            n1=rand;
+            if n1<noise_prob
+                I_noise_PFC_1(j,i)= noise_amp;
+            else
+                I_noise_PFC_1(j,i)=0;
+            end
 
             if (last_spike_PFC_S_YT(j)~=10^10 && (i-last_spike_PFC_S_YT(j))>tref)
 
@@ -859,6 +886,13 @@ for rr= 1:total_trial_num
 
             % membrane potential across deep layers of PFC cells
 
+            n1=rand;
+            if n1<noise_prob_PFC
+                I_noise_PFC_2(j,i)= noise_amp;
+            else
+                I_noise_PFC_2(j,i)= 0;
+            end
+
             if (last_spike_PFC_D_RC(j)~=10^10 && (i-last_spike_PFC_D_RC(j))>tref)
 
                 y_aPFC_D_RC(j,i) = y_aPFC_D_RC(j,i-1)+leaky_coef*((E_L-y_aPFC_D_RC(j,i-1))/tha)*dt+(Iext_DPFC_RC(j)+ (W21 * Isyn_aPFC_to_D_BT(j,i)+ W22 * Isyn_aPFC_to_D_RC(j,i)+ W23 *Isyn_aPFC_to_D_GC(j,i)+ W24* Isyn_aPFC_to_D_YT(j,i)) +Isyn_aPFC_D_shared(j,i) +I_noise_PFC_2(j, i))*dt*(RM/tha); %+Isyn_IPL_PFC(j,i)-Isyn_aPFC_Inh_to_exc(j,i)
@@ -882,6 +916,13 @@ for rr= 1:total_trial_num
 
             %%%%%%%%%%%% membrane potential across deep layers of PFC cells
 
+            n1=rand;
+            if n1<noise_prob_PFC
+                I_noise_PFC_2(j,i)= noise_amp;
+            else
+                I_noise_PFC_2(j,i)= 0;
+            end
+
             if (last_spike_PFC_D_GC(j)~=10^10 && (i-last_spike_PFC_D_GC(j))>tref)
 
                 y_aPFC_D_GC(j,i) = y_aPFC_D_GC(j,i-1)+leaky_coef*((E_L-y_aPFC_D_GC(j,i-1))/tha)*dt+(Iext_DPFC_GC(j)+ (W31 * Isyn_aPFC_to_D_BT(j,i)+ W32 * Isyn_aPFC_to_D_RC(j,i)+ W33 *Isyn_aPFC_to_D_GC(j,i)+ W34* Isyn_aPFC_to_D_YT(j,i))+ Isyn_aPFC_D_shared(j,i) +I_noise_PFC_2(j, i))*dt*(RM/tha); %+Isyn_IPL_PFC(j,i)-Isyn_aPFC_Inh_to_exc(j,i)
@@ -904,6 +945,13 @@ for rr= 1:total_trial_num
             end
 
             %%%%%%%%%%%% membrane potential across deep layers of PFC cells
+
+            n1=rand;
+            if n1<noise_prob_PFC
+                I_noise_PFC_2(j,i)= noise_amp;
+            else
+                I_noise_PFC_2(j,i)= 0;
+            end
 
             if (last_spike_PFC_D_YT(j)~=10^10 && (i-last_spike_PFC_D_YT(j))>tref)
 
@@ -1058,8 +1106,8 @@ for rr= 1:total_trial_num
     %                 spiketimes_MD=[spiketimes_MD;i,j];
     
                 end
-
             end
+
 
 
 
@@ -1253,42 +1301,65 @@ for rr= 1:total_trial_num
     % LFP_pPFC_D(rr,:)= smooth(mean(Isyn_pPFC_S_to_D_effective)+ mean(Isyn_pPFC_D_effective)+ mean(I_noise_PFC_3));% post-synaptic current in pfc
     % LFP_response(rr,:)= smooth(mean(Isyn_pPFCD_to_response_effective)+ mean(I_noise_PFC));
 
-    full_PFC_S_BT = save_to_cell(y_PFC_S_BT, full_PFC_S_BT, v_th);
+    if VA_off
+        y_VA_matrix_shape = -10^10 * ones(numberofneurons,length(T));
+        y_VA_matrix_Orientation = -10^10 * ones(numberofneurons,length(T));
+    end
 
-    full_PFC_S_RC = save_to_cell(y_PFC_S_RC, full_PFC_S_RC, v_th);
+    if MD_off
+        y_MD_core_shape = -10^10 * ones(numberofneurons,length(T));
+        y_MD_core_ori = -10^10 * ones(numberofneurons,length(T));
+    end
 
-    full_PFC_S_GC = save_to_cell(y_PFC_S_GC, full_PFC_S_GC, v_th);
 
-    full_PFC_S_YT = save_to_cell(y_PFC_S_YT, full_PFC_S_YT, v_th);
+    full_PFC_S_BT = save_to_cell(y_PFC_S_BT(:, 1:end_time), full_PFC_S_BT, v_th);
+
+    full_PFC_S_RC = save_to_cell(y_PFC_S_RC(:, 1:end_time), full_PFC_S_RC, v_th);
+
+    full_PFC_S_GC = save_to_cell(y_PFC_S_GC(:, 1:end_time), full_PFC_S_GC, v_th);
+
+    full_PFC_S_YT = save_to_cell(y_PFC_S_YT(:, 1:end_time), full_PFC_S_YT, v_th);
     
-    full_PFC_D_BT = save_to_cell(y_aPFC_D_BT, full_PFC_D_BT, v_th);
+    full_PFC_D_BT = save_to_cell(y_aPFC_D_BT(:, 1:end_time), full_PFC_D_BT, v_th);
 
-    full_PFC_D_RC = save_to_cell(y_aPFC_D_RC, full_PFC_D_RC, v_th);
+    full_PFC_D_RC = save_to_cell(y_aPFC_D_RC(:, 1:end_time), full_PFC_D_RC, v_th);
 
-    full_PFC_D_GC = save_to_cell(y_aPFC_D_GC, full_PFC_D_GC, v_th);
+    full_PFC_D_GC = save_to_cell(y_aPFC_D_GC(:, 1:end_time), full_PFC_D_GC, v_th);
 
-    full_PFC_D_YT = save_to_cell(y_aPFC_D_YT, full_PFC_D_YT, v_th);
+    full_PFC_D_YT = save_to_cell(y_aPFC_D_YT(:, 1:end_time), full_PFC_D_YT, v_th);
     
-    full_VA_shape = save_to_cell(y_VA_matrix_shape, full_VA_shape, v_th);
+    full_VA_shape = save_to_cell(y_VA_matrix_shape(:, 1:end_time), full_VA_shape, v_th);
 
-    full_VA_ori = save_to_cell(y_VA_matrix_Orientation, full_VA_ori, v_th);
+    full_VA_ori = save_to_cell(y_VA_matrix_Orientation(:, 1:end_time), full_VA_ori, v_th);
     
-    full_MD_shape = save_to_cell(y_MD_core_shape, full_MD_shape, v_th);
+    full_MD_shape = save_to_cell(y_MD_core_shape(:, 1:end_time), full_MD_shape, v_th);
      
-    full_MD_ori = save_to_cell(y_MD_core_ori, full_MD_ori, v_th);
+    full_MD_ori = save_to_cell(y_MD_core_ori(:, 1:end_time), full_MD_ori, v_th);
     
-    full_PFC_remote_shape = save_to_cell(y_pPFC_Shape, full_PFC_remote_shape, v_th);
+    full_PFC_shape_ensemble = save_to_cell(y_pPFC_Shape(:, 1:end_time), full_PFC_shape_ensemble, v_th);
     
-    full_PFC_remote_ori = save_to_cell(y_pPFC_Orientation, full_PFC_remote_ori, v_th);
+    full_PFC_ori_ensemble = save_to_cell(y_pPFC_Orientation(:, 1:end_time), full_PFC_ori_ensemble, v_th);
 
-    VA_neuron_index = get_target_neuron_idex(get_firing(y_VA_matrix_shape, v_th, 1));
-    MD_neuron_index = get_target_neuron_idex(get_firing(y_MD_core_shape, v_th, 1));
-    pPFC_neuron_index = get_target_neuron_idex(get_firing(y_pPFC_Shape, v_th, 1));
+    if stimulation_type <= 2
 
-    % only select target neuron set, movsum in get_firing_num keeps the dimenstion same   
-    full_VA_shape_num(rr, :) =  get_firing_num(get_firing(y_VA_matrix_shape(VA_neuron_index, :), v_th, 1), gauss_width);
-    full_MD_shape_num(rr, :) = get_firing_num(get_firing(y_MD_core_shape(MD_neuron_index, :), v_th, 1), gauss_width);
-    full_PFC_remote_shape_num(rr, :) = get_firing_num(get_firing(y_pPFC_Shape(pPFC_neuron_index, :), v_th, 1), gauss_width);
+        VA_neuron_index = get_target_neuron_idex(y_VA_matrix_shape > v_th);
+        MD_neuron_index = get_target_neuron_idex(y_MD_core_shape > v_th);
+        pPFC_neuron_index = get_target_neuron_idex(y_pPFC_Shape > v_th);
+    
+        % only select target neuron set, movsum in get_firing_num keeps the dimenstion same   
+        full_VA_shape_num(rr, :) =  get_firing_num(y_VA_matrix_shape(VA_neuron_index, :) > v_th, gauss_width);
+        full_MD_shape_num(rr, :) = get_firing_num(y_MD_core_shape(MD_neuron_index, :) > v_th, gauss_width);
+        full_PFC_remote_shape_num(rr, :) = get_firing_num(y_pPFC_Shape(pPFC_neuron_index, :) > v_th, gauss_width);
+    else
+        VA_neuron_index = get_target_neuron_idex(y_VA_matrix_Orientation > v_th);
+        MD_neuron_index = get_target_neuron_idex(y_MD_core_ori > v_th);
+        pPFC_neuron_index = get_target_neuron_idex(y_pPFC_Orientation > v_th);
+    
+        % only select target neuron set, movsum in get_firing_num keeps the dimenstion same   
+        full_VA_shape_num(rr, :) =  get_firing_num(y_VA_matrix_Orientation(VA_neuron_index, :) > v_th, gauss_width);
+        full_MD_shape_num(rr, :) = get_firing_num(y_MD_core_ori(MD_neuron_index, :) > v_th, gauss_width);
+        full_PFC_remote_shape_num(rr, :) = get_firing_num(y_pPFC_Orientation(pPFC_neuron_index, :) > v_th, gauss_width);
+    end
     
     disp(rr);
     toc
@@ -1309,127 +1380,15 @@ save("spike_time", ...
     'full_VA_ori', ...
     'full_MD_shape', ...
     'full_MD_ori', ...
-    'full_PFC_remote_shape', ...
-    'full_PFC_remote_ori', ...
+    'full_PFC_shape_ensemble', ...
+    'full_PFC_ori_ensemble', ...
     'full_VA_shape_num', ...
     'full_MD_shape_num', ...
     'full_PFC_remote_shape_num', ...
     '-v7.3');
 
-% trial_num = 1;
-% 
-% t_PFC_S_BT = zeros(numberofneurons, length(T));
-% t_PFC_S_RC = zeros(numberofneurons, length(T));
-% t_PFC_S_GC = zeros(numberofneurons, length(T));
-% t_PFC_S_YT = zeros(numberofneurons, length(T));
-% 
-% t_PFC_D_BT = zeros(numberofneurons, length(T));
-% t_PFC_D_RC = zeros(numberofneurons, length(T));
-% t_PFC_D_GC = zeros(numberofneurons, length(T));
-% t_PFC_D_YT = zeros(numberofneurons, length(T));
-% 
-% t_VA_shape = zeros(numberofneurons, length(T));
-% t_VA_ori = zeros(numberofneurons, length(T));
-% 
-% t_PFC_remote_shape = zeros(numberofneurons, length(T));
-% t_PFC_remote_ori = zeros(numberofneurons, length(T));
-% 
-% t_MD_shape = zeros(numberofneurons, length(T));
-% t_MD_ori = zeros(numberofneurons, length(T));
-% 
-% for i = 1:length(full_PFC_S_BT{trial_num})
-%     t_PFC_S_BT(full_PFC_S_BT{trial_num}(i, 1), full_PFC_S_BT{trial_num}(i, 2)) = 1;
-% end
-% 
-% for i = 1:length(full_PFC_S_RC{trial_num})
-%     t_PFC_S_RC(full_PFC_S_RC{trial_num}(i, 1), full_PFC_S_RC{trial_num}(i, 2)) = 1;
-% end
-% 
-% for i = 1:length(full_PFC_S_GC{trial_num})
-%     t_PFC_S_GC(full_PFC_S_GC{trial_num}(i, 1), full_PFC_S_GC{trial_num}(i, 2)) = 1;
-% end
-% 
-% for i = 1:length(full_PFC_S_YT{trial_num})
-%     t_PFC_S_YT(full_PFC_S_YT{trial_num}(i, 1), full_PFC_S_YT{trial_num}(i, 2)) = 1;
-% end
-% 
-% for i = 1:length(full_PFC_D_BT{trial_num})
-%     t_PFC_D_BT(full_PFC_D_BT{trial_num}(i, 1), full_PFC_D_BT{trial_num}(i, 2)) = 1;
-% end
-% 
-% for i = 1:length(full_PFC_D_RC{trial_num})
-%     t_PFC_D_RC(full_PFC_D_RC{trial_num}(i, 1), full_PFC_D_RC{trial_num}(i, 2)) = 1;
-% end
-% 
-% for i = 1:length(full_PFC_D_GC{trial_num})
-%     t_PFC_D_GC(full_PFC_D_GC{trial_num}(i, 1), full_PFC_D_GC{trial_num}(i, 2)) = 1;
-% end
-% 
-% for i = 1:length(full_PFC_D_YT{trial_num})
-%     t_PFC_D_YT(full_PFC_D_YT{trial_num}(i, 1), full_PFC_D_YT{trial_num}(i, 2)) = 1;
-% end
-% 
-% for i = 1:length(full_VA_shape{trial_num})
-%     t_VA_shape(full_VA_shape{trial_num}(i, 1), full_VA_shape{trial_num}(i, 2)) = 1;
-% end
-% 
-% for i = 1:length(full_PFC_remote_shape{trial_num})
-%     t_PFC_remote_shape(full_PFC_remote_shape{trial_num}(i, 1), full_PFC_remote_shape{trial_num}(i, 2)) = 1;
-% end
-% 
-% for i = 1:length(full_MD_shape{trial_num})
-%     t_MD_shape(full_MD_shape{trial_num}(i, 1), full_MD_shape{trial_num}(i, 2)) = 1;
-% end
-% 
-% figure(1)
-% 
-% subplot(4,1,1)
-% spy( t_PFC_S_BT,8,'b'),title('PFC Superficial blue triangle', 'FontSize', 16)
-% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-% 
-% 
-% subplot(4,1,2)
-% spy( t_PFC_S_RC,8,'b'),title('PFC Superficial red circle ', 'FontSize', 16)
-% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-% 
-% subplot(4,1,3)
-% spy( t_PFC_S_GC,8,'b'),title('PFC Superficial green circle ', 'FontSize', 16)
-% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-% 
-% subplot(4,1,4)
-% spy(t_PFC_S_YT,8,'b'),title('PFC Superficial yellow triangle', 'FontSize', 16)
-% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-% %
-% figure (2)
-% subplot(4,1,1)
-% spy( t_PFC_D_BT,8,'k'),title('PFC Deep blue triangle', 'FontSize', 16)
-% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-% subplot(4,1,2)
-% spy( t_PFC_D_RC,8,'k'),title('PFC Deep red circle', 'FontSize', 16)
-% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-% 
-% subplot(4,1,3)
-% spy( t_PFC_D_GC,8,'k'),title('PFC Deep green circle', 'FontSize', 16)
-% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-% subplot(4,1,4)
-% spy( t_PFC_D_YT,8,'k'),title('PFC Deep yellow triangle', 'FontSize', 16)
-% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-% 
-% 
-% figure(3)
-% subplot(3,1,1)
-% spy( t_VA_shape,8,'k'),title('VA Thalamus Shape', 'FontSize', 16)
-% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-% subplot(3,1,2)
-% spy( t_PFC_remote_shape,8,'b'),title('remote PFC Shape', 'FontSize', 16)
-% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-% subplot(3,1,3)
-% spy( t_MD_shape,8,'k'),title('MD', 'FontSize', 16)
-% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
-
-
 %%
-neuron_id = 20;
+neuron_id = 1;
 PFC_S_BT = zeros(total_trial_num, length(T));
 PFC_S_RC = zeros(total_trial_num, length(T));
 PFC_S_GC = zeros(total_trial_num, length(T));
@@ -1500,12 +1459,12 @@ for i = 1:total_trial_num
         VA_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
     end
 
-    temp = full_PFC_remote_shape{i};
+    temp = full_PFC_shape_ensemble{i};
     if ~isnan(temp)
         PFC_remote_shape(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
     end
 
-    temp = full_PFC_remote_ori{i};
+    temp = full_PFC_ori_ensemble{i};
     if ~isnan(temp)
         PFC_remote_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
     end
@@ -1520,6 +1479,7 @@ for i = 1:total_trial_num
         MD_ori(i, temp(temp(:, 1) == neuron_id, 2)) = 1;
     end
 end
+
 
 figure(1)
 
@@ -1566,10 +1526,10 @@ spy( VA_ori,8,'k'),title('VA Thalamus Orientation', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 subplot(6,1,3)
-spy( PFC_remote_shape,8,'b'),title('remote PFC Shape', 'FontSize', 16)
+spy( PFC_remote_shape,8,'b'),title('PFC Shape Ensemble', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 subplot(6,1,4)
-spy( PFC_remote_ori,8,'b'),title('remote PFC Ori', 'FontSize', 16)
+spy( PFC_remote_ori,8,'b'),title('PFC Ori Ensemble', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 subplot(6,1,5)
@@ -1599,11 +1559,11 @@ hold on
 plot(MD_firing_rate_timeseries, 'g'), xlim([st, final])
 hold on
 plot(pPFC_firing_rate_timeseries, 'r'), xlim([st, final])
-legend('VA', 'MD', 'PFC remote')
+legend('VA', 'MD', 'PFC Ensemble')
 
 
 %%
-trial_num = 4;
+trial_num = 5;
 
 t_PFC_S_BT = zeros(numberofneurons, length(T));
 t_PFC_S_RC = zeros(numberofneurons, length(T));
@@ -1626,72 +1586,100 @@ t_MD_ori = zeros(numberofneurons, length(T));
 
 [r, ~] = size(full_PFC_S_BT{trial_num});
 for i = 1:r
-    t_PFC_S_BT(full_PFC_S_BT{trial_num}(i, 1), full_PFC_S_BT{trial_num}(i, 2)) = 1;
+    if ~isnan(full_PFC_S_BT{trial_num})
+        t_PFC_S_BT(full_PFC_S_BT{trial_num}(i, 1), full_PFC_S_BT{trial_num}(i, 2)) = 1;
+    end
 end
 
 [r, ~] = size(full_PFC_S_RC{trial_num});
 for i = 1:r
-    t_PFC_S_RC(full_PFC_S_RC{trial_num}(i, 1), full_PFC_S_RC{trial_num}(i, 2)) = 1;
+    if ~isnan(full_PFC_S_RC{trial_num})
+        t_PFC_S_RC(full_PFC_S_RC{trial_num}(i, 1), full_PFC_S_RC{trial_num}(i, 2)) = 1;
+    end
 end
 
 [r, ~] = size(full_PFC_S_GC{trial_num});
 for i = 1:r
-    t_PFC_S_GC(full_PFC_S_GC{trial_num}(i, 1), full_PFC_S_GC{trial_num}(i, 2)) = 1;
+    if ~isnan(full_PFC_S_GC{trial_num})
+        t_PFC_S_GC(full_PFC_S_GC{trial_num}(i, 1), full_PFC_S_GC{trial_num}(i, 2)) = 1;
+    end
 end
 
 [r, ~] = size(full_PFC_S_YT{trial_num});
 for i = 1:r
-    t_PFC_S_YT(full_PFC_S_YT{trial_num}(i, 1), full_PFC_S_YT{trial_num}(i, 2)) = 1;
+    if ~isnan(full_PFC_S_YT{trial_num})
+        t_PFC_S_YT(full_PFC_S_YT{trial_num}(i, 1), full_PFC_S_YT{trial_num}(i, 2)) = 1;
+    end
 end
 
 [r, ~] = size(full_PFC_D_BT{trial_num});
 for i = 1:r
-    t_PFC_D_BT(full_PFC_D_BT{trial_num}(i, 1), full_PFC_D_BT{trial_num}(i, 2)) = 1;
+    if ~isnan(full_PFC_D_BT{trial_num})
+        t_PFC_D_BT(full_PFC_D_BT{trial_num}(i, 1), full_PFC_D_BT{trial_num}(i, 2)) = 1;
+    end
 end
 
 [r, ~] = size(full_PFC_D_RC{trial_num});
 for i = 1:r
-    t_PFC_D_RC(full_PFC_D_RC{trial_num}(i, 1), full_PFC_D_RC{trial_num}(i, 2)) = 1;
+    if ~isnan(full_PFC_D_RC{trial_num})
+        t_PFC_D_RC(full_PFC_D_RC{trial_num}(i, 1), full_PFC_D_RC{trial_num}(i, 2)) = 1;
+    end
 end
 
 [r, ~] = size(full_PFC_D_GC{trial_num});
 for i = 1:r
-    t_PFC_D_GC(full_PFC_D_GC{trial_num}(i, 1), full_PFC_D_GC{trial_num}(i, 2)) = 1;
+    if ~isnan(full_PFC_D_GC{trial_num})
+        t_PFC_D_GC(full_PFC_D_GC{trial_num}(i, 1), full_PFC_D_GC{trial_num}(i, 2)) = 1;
+    end
 end
 
 [r, ~] = size(full_PFC_D_YT{trial_num});
 for i = 1:r
-    t_PFC_D_YT(full_PFC_D_YT{trial_num}(i, 1), full_PFC_D_YT{trial_num}(i, 2)) = 1;
+    if ~isnan(full_PFC_D_YT{trial_num})
+        t_PFC_D_YT(full_PFC_D_YT{trial_num}(i, 1), full_PFC_D_YT{trial_num}(i, 2)) = 1;
+    end
 end
 
 [r, ~] = size(full_VA_shape{trial_num});
 for i = 1:r
-    t_VA_shape(full_VA_shape{trial_num}(i, 1), full_VA_shape{trial_num}(i, 2)) = 1;
+    if ~isnan(full_VA_shape{trial_num})
+        t_VA_shape(full_VA_shape{trial_num}(i, 1), full_VA_shape{trial_num}(i, 2)) = 1;
+    end
 end
 
 [r, ~] = size(full_VA_ori{trial_num});
 for i = 1:r
-    t_VA_ori(full_VA_ori{trial_num}(i, 1), full_VA_ori{trial_num}(i, 2)) = 1;
+    if ~isnan(full_VA_ori{trial_num})
+        t_VA_ori(full_VA_ori{trial_num}(i, 1), full_VA_ori{trial_num}(i, 2)) = 1;
+    end
 end
 
-[r, ~] = size(full_PFC_remote_shape{trial_num});
+[r, ~] = size(full_PFC_shape_ensemble{trial_num});
 for i = 1:r
-    t_PFC_remote_shape(full_PFC_remote_shape{trial_num}(i, 1), full_PFC_remote_shape{trial_num}(i, 2)) = 1;
+    if ~isnan(full_PFC_shape_ensemble{trial_num})
+        t_PFC_remote_shape(full_PFC_shape_ensemble{trial_num}(i, 1), full_PFC_shape_ensemble{trial_num}(i, 2)) = 1;
+    end
 end
 
-[r, ~] = size(full_PFC_remote_ori{trial_num});
+[r, ~] = size(full_PFC_ori_ensemble{trial_num});
 for i = 1:r
-    t_PFC_remote_ori(full_PFC_remote_ori{trial_num}(i, 1), full_PFC_remote_ori{trial_num}(i, 2)) = 1;
+    if ~isnan(full_PFC_ori_ensemble{trial_num})
+        t_PFC_remote_ori(full_PFC_ori_ensemble{trial_num}(i, 1), full_PFC_ori_ensemble{trial_num}(i, 2)) = 1;
+    end
 end
 
 [r, ~] = size(full_MD_shape{trial_num});
 for i = 1:r
-    t_MD_shape(full_MD_shape{trial_num}(i, 1), full_MD_shape{trial_num}(i, 2)) = 1;
+    if ~isnan(full_MD_shape{trial_num})
+        t_MD_shape(full_MD_shape{trial_num}(i, 1), full_MD_shape{trial_num}(i, 2)) = 1;
+    end
 end
 
 [r, ~] = size(full_MD_ori{trial_num});
 for i = 1:r
-    t_MD_ori(full_MD_ori{trial_num}(i, 1), full_MD_ori{trial_num}(i, 2)) = 1;
+    if ~isnan(full_MD_ori{trial_num})
+        t_MD_ori(full_MD_ori{trial_num}(i, 1), full_MD_ori{trial_num}(i, 2)) = 1;
+    end
 end
 
 figure(1)
@@ -1739,11 +1727,11 @@ spy( t_VA_ori,8,'k'),title('VA Thalamus Ori', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 subplot(6,1,3)
-spy( t_PFC_remote_shape,8,'b'),title('remote PFC Shape', 'FontSize', 16)
+spy( t_PFC_remote_shape,8,'b'),title('PFC Shape Ensemble', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 subplot(6,1,4)
-spy( t_PFC_remote_ori,8,'b'),title('remote PFC Ori', 'FontSize', 16)
+spy( t_PFC_remote_ori,8,'b'),title('PFC Ori Ensemble', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 subplot(6,1,5)
@@ -1757,10 +1745,10 @@ set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([
 
 figure(7)
 subplot(2,1,1)
-spy( y_FS_inh_ori       >-50,8,'b'),title('FS_inh_ori ', 'FontSize', 16)
+spy( y_FS_inh_ori>-50,8,'b'),title('FS inh ori ', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 subplot(2,1,2)
-spy( y_FS_inh_shape>-50,8,'r'),title('FS_inh_shape cells', 'FontSize', 16)
+spy( y_FS_inh_shape>-50,8,'r'),title('FS inh shape cells', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
 
@@ -1880,14 +1868,14 @@ subplot(5,1,4)
 spy( y_pPFC_Orientation>-50,8,'b'),title('remote PFC Ori', 'FontSize', 16)
 set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 
-% subplot(5,1,5)
-% spy( y_FS_inh>-50,8,'r'),title('MD driven FS cells', 'FontSize', 16)
-% set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+subplot(5,1,5)
+spy( y_FS_inh>-50,8,'r'),title('MD driven FS cells', 'FontSize', 16)
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 %%
 close all
 
 figure(11)
-spy( y_VA_matrix_Orientation>-50,8,'k'),title('VA Thalamus Shape', 'FontSize', 16)
+spy( y_VA_matrix_shape>-50,8,'k'),title('VA Thalamus Shape', 'FontSize', 16)
 set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
 hold on 
 spy( y_MD_core_shape>-50,8,'r'),title('MD', 'FontSize', 16)
@@ -1930,27 +1918,27 @@ firing_rate_timeseries=  conv_gaussian(firing_rate_timeseries, srate,gauss_width
 hold on
 
 plot(firing_rate_timeseries, 'r'), xlim([st, final])
-%%
-
-[neuo_id, firing_time] = find(get_firing(y_VA_matrix_Orientation, -50, 1));
-debug = cat(2, neuo_id, firing_time);
 
 %%
 
 
-function firing = get_firing(current, threshold, nanvalue)
-% current: membrane potiential
-% window_size: threshold for firing
-% thresh: predefined nan value
-    firing = (current > threshold) & (current ~= nanvalue);
-end
+debug = get_firing_num(y_VA_matrix_Orientation(VA_neuron_index, :) > v_th, gauss_width);
+
+
+%%
+% function firing = get_firing(current, threshold, nanvalue)
+% % current: membrane potiential
+% % window_size: threshold for firing
+% % thresh: predefined nan value
+%     firing = (current > threshold) & (current ~= nanvalue);
+% end
 
 function output_cell = save_to_cell(current, cell, thresh)
-    [neuo_id, firing_time] = find(get_firing(current, thresh, 1));
-    disp(neuo_id);
-    disp(firing_time);
+    [neuo_id, firing_time] = find(current > thresh);
+%     disp(neuo_id);
+%     disp(firing_time);
     if isempty(neuo_id)
-        output_cell = [cell, {NaN}];
+        output_cell = [cell; {NaN}];
     else
         output_cell = [cell; cat(2, neuo_id, firing_time)];
     end
