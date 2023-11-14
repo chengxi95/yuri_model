@@ -1,6 +1,6 @@
  
 close all;
-clear all;
+% clear all;
 % rng('default')
 % this code simulate two populations of cortical cells (aPFC and pPFC superficial and deep layers)  and three population of thalamic cells (aPFC core, pPFC core and Matrix cells)during a working memory task.
 % our assumption is that thalamus increases the
@@ -16,6 +16,9 @@ numberofneurons = 50;% number of neurons per group
 tha = 20; %time constant
  
 total_trial_num = 200;
+
+% initizalize the external current
+initialization = 0;
 
 % 1:BT, 2:RC, 3:GC, 4:YT
 stimulation_type = 1; 
@@ -46,25 +49,6 @@ leaky_coef = 1; %
 tref = 1/dt; % 1 ms refratory time
 
 % placeholder for multi trials results (first neuron of the section are saved)
-% full_PFC_S_BT = []; 
-% full_PFC_S_RC = [];
-% full_PFC_S_GC = []; 
-% full_PFC_S_YT = [];
-% 
-% full_PFC_D_BT = []; 
-% full_PFC_D_RC = [];
-% full_PFC_D_GC = []; 
-% full_PFC_D_YT = []; 
-% 
-% full_VA_shape = [];
-% full_VA_ori = []; 
-% 
-% full_MD_shape = [];
-% full_MD_ori = []; 
-% 
-% full_PFC_shape_ensemble = [];
-% full_PFC_ori_ensemble = [];
-
 full_PFC_S_BT = {}; 
 full_PFC_S_RC = {};
 full_PFC_S_GC = {}; 
@@ -152,22 +136,6 @@ Matrix_MD_to_PFC= zeros(numberofneurons,numberofneurons);%matrix_M;
 % random_commections= randi(numberofneurons, 1, 20);
 Matrix_MD_to_PFC(:,1:25)=1;
 % Matrix_MD_to_PFC(26:50, 1:25)=1;
-
-Matrix_random_MD_PFC_BT= zeros(numberofneurons,numberofneurons);
-Matrix_random_MD_PFC_RC= zeros(numberofneurons,numberofneurons);
-Matrix_random_MD_PFC_GC= zeros(numberofneurons,numberofneurons);
-Matrix_random_MD_PFC_YT= zeros(numberofneurons,numberofneurons);
-
-for i=1:5
-random_commections= randi(numberofneurons, 1, 1);
-Matrix_random_MD_PFC_BT (random_commections,random_commections)=1;
-random_commections= randi(numberofneurons, 1, 1);
-Matrix_random_MD_PFC_RC (random_commections,random_commections)=1;
-random_commections= randi(numberofneurons, 1, 1);
-Matrix_random_MD_PFC_GC (random_commections,random_commections)=1;
-random_commections= randi(numberofneurons, 1, 1);
-Matrix_random_MD_PFC_YT (random_commections,random_commections)=1;
-end 
 matrix_local(41:50,1:10 )= W_local;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   superficial to deep layers
@@ -237,28 +205,44 @@ W_VA_exi = 0.005;
 W_MD_inh = 0.0005; % [, 0.001]
 W_MD_PFC = 0.012;
 
-
-% driving currents-----------------------------------------------------
-Iext_SPFC_YT = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-Iext_SPFC_BT = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-Iext_SPFC_RC = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-Iext_SPFC_GC = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-Iext_DPFC_YT = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-Iext_DPFC_BT = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-Iext_DPFC_RC = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-Iext_DPFC_GC = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-Iext_PFC_M = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5);
-Iext_PFC_remote_ORI = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-Iext_PFC_remote_Shape = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-Iext_PFC_D = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-Iext_PFC_D_2 = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-Iext_PFC_D_3 = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-Iext_MD = 1.5 - 0.001 *rand(numberofneurons,1); % same driving current for all thalamic cells
-Iext_VA = 1.5 - 0.001 *rand(numberofneurons,1); % same driving current for all thalamic cells
-Iext_Inh = 1.5 -  0.01 *(rand(numberofneurons,1)-0.5); % driving current for inhibitory cells similar in PFC and IPL
-Iext_Inh_pPFC = 1.5 - 0.01 *(rand(numberofneurons,1)-0.5); %driving current for inhibitory cells similar in PFC and IPL
-Iext_Inh_PV = 1.49 - 0.0 *(rand(numberofneurons,1));
-
+if initialization
+    Matrix_random_MD_PFC_BT= zeros(numberofneurons,numberofneurons);
+    Matrix_random_MD_PFC_RC= zeros(numberofneurons,numberofneurons);
+    Matrix_random_MD_PFC_GC= zeros(numberofneurons,numberofneurons);
+    Matrix_random_MD_PFC_YT= zeros(numberofneurons,numberofneurons);
+    
+    for i=1:5
+    random_commections= randi(numberofneurons, 1, 1);
+    Matrix_random_MD_PFC_BT (random_commections,random_commections)=1;
+    random_commections= randi(numberofneurons, 1, 1);
+    Matrix_random_MD_PFC_RC (random_commections,random_commections)=1;
+    random_commections= randi(numberofneurons, 1, 1);
+    Matrix_random_MD_PFC_GC (random_commections,random_commections)=1;
+    random_commections= randi(numberofneurons, 1, 1);
+    Matrix_random_MD_PFC_YT (random_commections,random_commections)=1;
+    end 
+    
+    % driving currents-----------------------------------------------------
+    Iext_SPFC_YT = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
+    Iext_SPFC_BT = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
+    Iext_SPFC_RC = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
+    Iext_SPFC_GC = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
+    Iext_DPFC_YT = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
+    Iext_DPFC_BT = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
+    Iext_DPFC_RC = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
+    Iext_DPFC_GC = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
+    Iext_PFC_M = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5);
+    Iext_PFC_remote_ORI = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
+    Iext_PFC_remote_Shape = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
+    Iext_PFC_D = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
+    Iext_PFC_D_2 = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
+    Iext_PFC_D_3 = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
+    Iext_MD = 1.5 - 0.001 *rand(numberofneurons,1); % same driving current for all thalamic cells
+    Iext_VA = 1.5 - 0.001 *rand(numberofneurons,1); % same driving current for all thalamic cells
+    Iext_Inh = 1.5 -  0.01 *(rand(numberofneurons,1)-0.5); % driving current for inhibitory cells similar in PFC and IPL
+    Iext_Inh_pPFC = 1.5 - 0.01 *(rand(numberofneurons,1)-0.5); %driving current for inhibitory cells similar in PFC and IPL
+    Iext_Inh_PV = 1.49 - 0.0 *(rand(numberofneurons,1));
+end
 
 for rr= 1:total_trial_num
     tic
@@ -1366,6 +1350,30 @@ for rr= 1:total_trial_num
         
 end
 
+save("initialization", ...
+    'Matrix_random_MD_PFC_BT', ...
+    'Matrix_random_MD_PFC_RC', ...
+    'Matrix_random_MD_PFC_GC', ...
+    'Matrix_random_MD_PFC_YT', ...
+    'Iext_SPFC_YT', ...
+    'Iext_SPFC_BT', ...
+    'Iext_SPFC_RC', ...
+    'Iext_SPFC_GC', ...
+    'Iext_DPFC_YT', ...
+    'Iext_DPFC_BT', ...
+    'Iext_DPFC_RC', ...
+    'Iext_DPFC_GC', ...
+    'Iext_PFC_M', ...
+    'Iext_PFC_remote_ORI', ...
+    'Iext_PFC_remote_Shape', ...
+    'Iext_PFC_D', ...
+    'Iext_PFC_D_2', ...
+    'Iext_PFC_D_3', ...
+    'Iext_MD', ...
+    'Iext_VA', ...
+    'Iext_Inh', ...
+    'Iext_Inh_pPFC', ...
+    'Iext_Inh_PV')
 
 save("spike_time", ...
     'full_PFC_S_BT', ...
@@ -1572,7 +1580,7 @@ legend('VA', 'MD', 'PFC Ensemble')
 
 
 %%
-trial_num = 5;
+trial_num = 1;
 
 t_PFC_S_BT = zeros(numberofneurons, length(T));
 t_PFC_S_RC = zeros(numberofneurons, length(T));
