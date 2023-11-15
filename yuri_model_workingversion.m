@@ -1770,47 +1770,6 @@ set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([
 
 
 %%
-% save("good_initial", ...
-%     'Iext_SPFC_YT', ...
-%     'Iext_SPFC_BT', ...
-%     'Iext_SPFC_RC', ...
-%     'Iext_SPFC_GC', ...
-%     'Iext_DPFC_YT', ...
-%     'Iext_DPFC_BT', ...
-%     'Iext_DPFC_RC', ...
-%     'Iext_DPFC_GC', ...
-%     'Iext_PFC_M', ...
-%     'Iext_PFC_remote_ORI', ...
-%     'Iext_PFC_remote_Shape', ...
-%     'Iext_PFC_D', ...
-%     'Iext_PFC_D_2', ...
-%     'Iext_PFC_D_3', ...
-%     'Iext_MD', ...
-%     'Iext_VA', ...
-%     'Iext_Inh', ...
-%     'Iext_Inh_pPFC', ...
-%     'Iext_Inh_PV', ...
-%     'Iext_response');
-% Iext_SPFC_YT = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-% Iext_SPFC_BT = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-% Iext_SPFC_RC = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-% Iext_SPFC_GC = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-% Iext_DPFC_YT = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-% Iext_DPFC_BT = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-% Iext_DPFC_RC = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-% Iext_DPFC_GC = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-% Iext_PFC_M = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5);
-% Iext_PFC_remote_ORI = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-% Iext_PFC_remote_Shape = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-% Iext_PFC_D = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-% Iext_PFC_D_2 = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-% Iext_PFC_D_3 = 1.4955 +  0.001 *(rand(numberofneurons,1)-0.5); % similar driving current for PFC and IPL cells small variation across cells
-% Iext_MD = 1.5 - 0.005 *rand(numberofneurons,1); % same driving current for all thalamic cells
-% Iext_VA = 1.5 - 0.01 *rand(numberofneurons,1); % same driving current for all thalamic cells
-% Iext_Inh = 1.5 -  0.01 *(rand(numberofneurons,1)-0.5); % driving current for inhibitory cells similar in PFC and IPL
-% Iext_Inh_pPFC = 1.5 - 0.01 *(rand(numberofneurons,1)-0.5); %driving current for inhibitory cells similar in PFC and IPL
-% Iext_Inh_PV = 1.49 - 0.0 *(rand(numberofneurons,1));
-% Iext_response = 1.5 - 0.01 *(rand(numberofneurons,1));
 
 %%
 figure(1)
@@ -1905,7 +1864,67 @@ set(gca,'DataAspectRatio',[10000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim(
 
 %% ploting spikes
 %%
+load('spike_time_BT.mat')
+fr_PFC_S_BT = get_neuron_firing_ratio(full_PFC_S_BT, total_trial_num);
+fr_PFC_S_RC = get_neuron_firing_ratio(full_PFC_S_RC, total_trial_num);
+fr_PFC_S_GC = get_neuron_firing_ratio(full_PFC_S_GC, total_trial_num);
+fr_PFC_S_YT = get_neuron_firing_ratio(full_PFC_S_YT, total_trial_num);
+fr_PFC_D_BT = get_neuron_firing_ratio(full_PFC_D_BT, total_trial_num);
+fr_PFC_D_RC = get_neuron_firing_ratio(full_PFC_D_RC, total_trial_num);
+fr_PFC_D_GC = get_neuron_firing_ratio(full_PFC_D_GC, total_trial_num);
+fr_PFC_D_YT = get_neuron_firing_ratio(full_PFC_D_YT, total_trial_num);
+fr_VA_shape = get_neuron_firing_ratio(full_VA_shape, total_trial_num);
+fr_VA_ori = get_neuron_firing_ratio(full_VA_ori, total_trial_num);
+fr_MD_shape = get_neuron_firing_ratio(full_MD_shape, total_trial_num);
+fr_MD_ori = get_neuron_firing_ratio(full_MD_ori, total_trial_num);
+fr_PFC_shape_ensemble = get_neuron_firing_ratio(full_PFC_shape_ensemble, total_trial_num);
+fr_PFC_ori_ensemble = get_neuron_firing_ratio(full_PFC_ori_ensemble, total_trial_num);
 
+fr_PFC_S_full_BT = cat(1, fr_PFC_S_BT, fr_PFC_S_RC, fr_PFC_S_GC, fr_PFC_S_YT);
+fr_PFC_D_full_BT = cat(1, fr_PFC_D_BT, fr_PFC_D_RC, fr_PFC_D_GC, fr_PFC_D_YT);
+fr_VA_full_BT = cat(1, fr_VA_shape, fr_VA_ori);
+fr_MD_full_BT = cat(1, fr_MD_shape, fr_MD_ori);
+fr_PFC_ensemble_full_BT = cat(1, fr_PFC_shape_ensemble, fr_PFC_ori_ensemble);
+
+load('spike_time_RC.mat')
+fr_PFC_S_BT = get_neuron_firing_ratio(full_PFC_S_BT, total_trial_num);
+fr_PFC_S_RC = get_neuron_firing_ratio(full_PFC_S_RC, total_trial_num);
+fr_PFC_S_GC = get_neuron_firing_ratio(full_PFC_S_GC, total_trial_num);
+fr_PFC_S_YT = get_neuron_firing_ratio(full_PFC_S_YT, total_trial_num);
+fr_PFC_D_BT = get_neuron_firing_ratio(full_PFC_D_BT, total_trial_num);
+fr_PFC_D_RC = get_neuron_firing_ratio(full_PFC_D_RC, total_trial_num);
+fr_PFC_D_GC = get_neuron_firing_ratio(full_PFC_D_GC, total_trial_num);
+fr_PFC_D_YT = get_neuron_firing_ratio(full_PFC_D_YT, total_trial_num);
+fr_VA_shape = get_neuron_firing_ratio(full_VA_shape, total_trial_num);
+fr_VA_ori = get_neuron_firing_ratio(full_VA_ori, total_trial_num);
+fr_MD_shape = get_neuron_firing_ratio(full_MD_shape, total_trial_num);
+fr_MD_ori = get_neuron_firing_ratio(full_MD_ori, total_trial_num);
+fr_PFC_shape_ensemble = get_neuron_firing_ratio(full_PFC_shape_ensemble, total_trial_num);
+fr_PFC_ori_ensemble = get_neuron_firing_ratio(full_PFC_ori_ensemble, total_trial_num);
+
+fr_PFC_S_full_RC = cat(1, fr_PFC_S_BT, fr_PFC_S_RC, fr_PFC_S_GC, fr_PFC_S_YT);
+fr_PFC_D_full_RC = cat(1, fr_PFC_D_BT, fr_PFC_D_RC, fr_PFC_D_GC, fr_PFC_D_YT);
+fr_VA_full_RC = cat(1, fr_VA_shape, fr_VA_ori);
+fr_MD_full_RC = cat(1, fr_MD_shape, fr_MD_ori);
+fr_PFC_ensemble_full_RC = cat(1, fr_PFC_shape_ensemble, fr_PFC_ori_ensemble);
+
+close all
+figure(1)
+subplot(3,2,1)
+scatter(fr_PFC_S_full_BT, fr_PFC_S_full_RC, 5), title('PFC superficial', 'FontSize', 16);
+set(gca,'DataAspectRatio',[1 1 1]),ylabel('Firing Ratio RC Stimus', 'FontSize',16), xlabel('Firing Ratio BT Stimus', 'FontSize',16)
+subplot(3,2,2)
+scatter(fr_PFC_D_full_BT, fr_PFC_D_full_RC, 5), title('PFC depth', 'FontSize', 16);
+set(gca,'DataAspectRatio',[1 1 1]),ylabel('Firing Ratio RC Stimus', 'FontSize',16), xlabel('Firing Ratio BT Stimus', 'FontSize',16)
+subplot(3,2,3)
+scatter(fr_VA_full_BT, fr_VA_full_RC, 5), title('VA', 'FontSize', 16);
+set(gca,'DataAspectRatio',[1 1 1]),ylabel('Firing Ratio RC Stimus', 'FontSize',16), xlabel('Firing Ratio BT Stimus', 'FontSize',16)
+subplot(3,2,4)
+scatter(fr_MD_full_BT, fr_MD_full_RC, 5), title('MD', 'FontSize', 16);
+set(gca,'DataAspectRatio',[1 1 1]),ylabel('Firing Ratio RC Stimus', 'FontSize',16), xlabel('Firing Ratio BT Stimus', 'FontSize',16)
+subplot(3,2,5)
+scatter(fr_PFC_ensemble_full_BT, fr_PFC_ensemble_full_RC, 5), title('PFC ensemble', 'FontSize', 16);
+set(gca,'DataAspectRatio',[1 1 1]),ylabel('Firing Ratio RC Stimus', 'FontSize',16), xlabel('Firing Ratio BT Stimus', 'FontSize',16)
 
 %%
 close all
