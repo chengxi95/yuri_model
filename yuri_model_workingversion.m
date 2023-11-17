@@ -2,6 +2,7 @@
 close all;
 % clear all;
 % rng('default')
+load('initialization.mat')
 % this code simulate two populations of cortical cells (aPFC and pPFC superficial and deep layers)  and three population of thalamic cells (aPFC core, pPFC core and Matrix cells)during a working memory task.
 % our assumption is that thalamus increases the
 % cortico-cortical connectivity gain by a coefiecint an amplification
@@ -22,9 +23,12 @@ initialization = 0;
 
 % 1:BT, 2:RC, 3:GC, 4:YT
 stimulation_type = 1; 
-
+ 
 % MD current factor to PFC
-md_pfc_factor = 1.1;
+md_pfc_factor = 1;
+
+% PFC superficial factor
+pfc_s_factor = 1;
 
 fs_strength = 0.5; % [0.04, ]
 
@@ -511,7 +515,7 @@ for rr= 1:total_trial_num
         %%%%%%%%% Superficial layer (l = 2) to superficial layer (l = 2)
         %%%%%%%%% excitatory to excitatory  within chains
 
-        w_within_chains = 0.6;
+        w_within_chains = 0.6 * pfc_s_factor;
         Isyn_aPFC_local_BT(:,i+ delay) = Isyn_aPFC_local_BT(:,i+ delay) + w_within_chains .* sum(((i-last_spike_PFC_S_BT<spikewidth) & (i-last_spike_PFC_S_BT>0)) .* matrix_local, 1).';
 
         Isyn_aPFC_local_RC(:,i+ delay) = Isyn_aPFC_local_RC(:,i+ delay) + w_within_chains .* sum(((i-last_spike_PFC_S_RC<spikewidth) & (i-last_spike_PFC_S_RC>0)) .* matrix_local, 1).';
@@ -523,7 +527,7 @@ for rr= 1:total_trial_num
         %%%%%%%%%%%Superficial layer (l = 2) to superficial layer (l = 2)
         %%%%%%%%%%% excitatory to excitatory across chains
 
-        w_across_chains= 0.45;
+        w_across_chains= 0.45 * pfc_s_factor;
         
         Isyn_aPFC_local_shared(:,i+ delay) = Isyn_aPFC_local_shared(:,i+ delay) + w_across_chains .* sum(((i-last_spike_PFC_S_BT<spikewidth) & (i-last_spike_PFC_S_BT>0)) .* matrix_local, 1).';
 
@@ -1406,9 +1410,9 @@ t_final = 4000; %simulation time ms
 end_time = 3500/dt;
 T = 0:dt:t_final;
 
-%%
 
-neuron_id = 30;
+%%
+neuron_id = 1;
 PFC_S_BT = zeros(total_trial_num, length(T));
 PFC_S_RC = zeros(total_trial_num, length(T));
 PFC_S_GC = zeros(total_trial_num, length(T));
