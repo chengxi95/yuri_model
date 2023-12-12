@@ -16,7 +16,7 @@ numberofneurons = 50;% number of neurons per group
 %   Time constants
 tha = 20; %time constant
  
-total_trial_num = 20;
+total_trial_num = 1;
 
 % initizalize the external current
 initialization = 0;
@@ -28,7 +28,7 @@ stimulation_type = 1;
 md_pfc_factor = 1;
 
 % PFC superficial factor
-pfc_s_factor = 1;
+pfc_s_factor = 5;
 
 fs_strength = 0.5; % [0.04, ]
 
@@ -157,10 +157,10 @@ matrix_local_S_D(1:10, 1:10) = 2*W_S_D;
 
 %%%%%%%%%%%%%%%%%
 %connections from superficial layer to the deep layer
-W11=2; W12=0.2; W13=0.2; W14= 0.2;
-W21=0.2; W22=2; W23=0.2; W24= 0.2;
-W31=0.2; W32=0.2; W33=2; W34= 0.2;
-W41=0.2; W42=0.2; W43=0.2; W44= 2;
+W11=2; W12=0.8; W13=0.8; W14= 0.8;
+W21=0.8; W22=2; W23=0.8; W24= 0.8;
+W31=0.8; W32=0.8; W33=2; W34= 0.8;
+W41=0.8; W42=0.8; W43=0.8; W44= 2;
 
 % W11=2; W12=0.6; W13=0.2; W14= 0.2;
 % W21=0.6; W22=2; W23=0.2; W24= 0.2;
@@ -756,12 +756,12 @@ for rr= 1:total_trial_num
 
             % membrane potential across PFC cells
 
-            n1=rand;
-            if n1<noise_prob
-                I_noise_PFC_1(j,i)= noise_amp;
-            else
-                I_noise_PFC_1(j,i)=0;
-            end
+            % n1=rand;
+            % if n1<noise_prob
+            %     I_noise_PFC_1(j,i)= noise_amp;
+            % else
+            %     I_noise_PFC_1(j,i)=0;
+            % end
 
             if (last_spike_PFC_S_RC(j)~=10^10 && (i-last_spike_PFC_S_RC(j))>tref)
 
@@ -784,12 +784,12 @@ for rr= 1:total_trial_num
             end
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
-            n1=rand;
-            if n1<noise_prob
-                I_noise_PFC_1(j,i)= noise_amp;
-            else
-                I_noise_PFC_1(j,i)=0;
-            end
+            % n1=rand;
+            % if n1<noise_prob
+            %     I_noise_PFC_1(j,i)= noise_amp;
+            % else
+            %     I_noise_PFC_1(j,i)=0;
+            % end
 
             if (last_spike_PFC_S_GC(j)~=10^10 && (i-last_spike_PFC_S_GC(j))>tref)
 
@@ -812,12 +812,12 @@ for rr= 1:total_trial_num
             end
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
-            n1=rand;
-            if n1<noise_prob
-                I_noise_PFC_1(j,i)= noise_amp;
-            else
-                I_noise_PFC_1(j,i)=0;
-            end
+            % n1=rand;
+            % if n1<noise_prob
+            %     I_noise_PFC_1(j,i)= noise_amp;
+            % else
+            %     I_noise_PFC_1(j,i)=0;
+            % end
 
             if (last_spike_PFC_S_YT(j)~=10^10 && (i-last_spike_PFC_S_YT(j))>tref)
 
@@ -877,12 +877,12 @@ for rr= 1:total_trial_num
 
             % membrane potential across deep layers of PFC cells
 
-            n1=rand;
-            if n1<noise_prob_PFC
-                I_noise_PFC_2(j,i)= noise_amp;
-            else
-                I_noise_PFC_2(j,i)= 0;
-            end
+            % n1=rand;
+            % if n1<noise_prob_PFC
+            %     I_noise_PFC_2(j,i)= noise_amp;
+            % else
+            %     I_noise_PFC_2(j,i)= 0;
+            % end
 
             if (last_spike_PFC_D_RC(j)~=10^10 && (i-last_spike_PFC_D_RC(j))>tref)
 
@@ -907,12 +907,12 @@ for rr= 1:total_trial_num
 
             %%%%%%%%%%%% membrane potential across deep layers of PFC cells
 
-            n1=rand;
-            if n1<noise_prob_PFC
-                I_noise_PFC_2(j,i)= noise_amp;
-            else
-                I_noise_PFC_2(j,i)= 0;
-            end
+            % n1=rand;
+            % if n1<noise_prob_PFC
+            %     I_noise_PFC_2(j,i)= noise_amp;
+            % else
+            %     I_noise_PFC_2(j,i)= 0;
+            % end
 
             if (last_spike_PFC_D_GC(j)~=10^10 && (i-last_spike_PFC_D_GC(j))>tref)
 
@@ -937,12 +937,12 @@ for rr= 1:total_trial_num
 
             %%%%%%%%%%%% membrane potential across deep layers of PFC cells
 
-            n1=rand;
-            if n1<noise_prob_PFC
-                I_noise_PFC_2(j,i)= noise_amp;
-            else
-                I_noise_PFC_2(j,i)= 0;
-            end
+            % n1=rand;
+            % if n1<noise_prob_PFC
+            %     I_noise_PFC_2(j,i)= noise_amp;
+            % else
+            %     I_noise_PFC_2(j,i)= 0;
+            % end
 
             if (last_spike_PFC_D_YT(j)~=10^10 && (i-last_spike_PFC_D_YT(j))>tref)
 
