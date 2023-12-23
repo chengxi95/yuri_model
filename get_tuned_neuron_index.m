@@ -10,7 +10,7 @@ function neuron_index_list = get_tuned_neuron_index(firing_index_time, trial_num
     
     base_firing_num = -1 * ones(numberofneurons, trial_num);
     test_firing_num = -1 * ones(numberofneurons, trial_num);
-
+ 
     for i = 1:trial_num
         temp = firing_index_time{i};
         if ~isnan(temp)
