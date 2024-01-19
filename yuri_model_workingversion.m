@@ -15,10 +15,10 @@ numberofneurons = 50;% number of neurons per group
 %   Time constants
 tha = 20; %time constant
  
-total_trial_num = 200;
+total_trial_num = 5;
 
 % 1:BT, 2:RC, 3:GC, 4:YT
-stimulation_type = 1; 
+stimulation_type = 2; 
 
 fs_strength = 0.5; % [0.04, ]
 
@@ -1394,10 +1394,11 @@ dt = 0.01; %step size ms
 t_final = 4000; %simulation time ms
 end_time = 3500/dt;
 T = 0:dt:t_final;
+gauss_width= 100;
 
 %%
 
-neuron_id = 30;
+neuron_id = 1;
 PFC_S_BT = zeros(total_trial_num, length(T));
 PFC_S_RC = zeros(total_trial_num, length(T));
 PFC_S_GC = zeros(total_trial_num, length(T));
@@ -1529,25 +1530,25 @@ set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Trial number', 'FontSize',16), xli
 figure( 3)
 subplot(6,1,1)
 spy( VA_shape,8,'k'),title('VA Thalamus Shape', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
+set(gca,'DataAspectRatio',[500 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 subplot(6,1,2)
 spy( VA_ori,8,'k'),title('VA Thalamus Orientation', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
+set(gca,'DataAspectRatio',[500 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 subplot(6,1,3)
 spy( PFC_remote_shape,8,'b'),title('PFC Shape Ensemble', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
+set(gca,'DataAspectRatio',[500 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 subplot(6,1,4)
 spy( PFC_remote_ori,8,'b'),title('PFC Ori Ensemble', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
+set(gca,'DataAspectRatio',[500 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 subplot(6,1,5)
 spy( MD_shape,8,'k'),title('MD Shape', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
+set(gca,'DataAspectRatio',[500 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 subplot(6,1,6)
 spy( MD_ori,8,'k'),title('MD ori', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
+set(gca,'DataAspectRatio',[500 1 1]),ylabel('Trial number', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 figure(4)
 srate=1000;
@@ -1695,70 +1696,70 @@ figure(1)
 
 subplot(4,1,1)
 spy( t_PFC_S_BT,8,'b'),title('PFC Superficial blue triangle', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 
 subplot(4,1,2)
 spy( t_PFC_S_RC,8,'b'),title('PFC Superficial red circle ', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 subplot(4,1,3)
 spy( t_PFC_S_GC,8,'b'),title('PFC Superficial green circle ', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 subplot(4,1,4)
 spy(t_PFC_S_YT,8,'b'),title('PFC Superficial yellow triangle', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 %
 figure (2)
 subplot(4,1,1)
 spy( t_PFC_D_BT,8,'k'),title('PFC Deep blue triangle', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 subplot(4,1,2)
 spy( t_PFC_D_RC,8,'k'),title('PFC Deep red circle', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 subplot(4,1,3)
 spy( t_PFC_D_GC,8,'k'),title('PFC Deep green circle', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 subplot(4,1,4)
 spy( t_PFC_D_YT,8,'k'),title('PFC Deep yellow triangle', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 
 figure(3)
 subplot(6,1,1)
 spy( t_VA_shape,8,'k'),title('VA Thalamus Shape', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 subplot(6,1,2)
 spy( t_VA_ori,8,'k'),title('VA Thalamus Ori', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 subplot(6,1,3)
 spy( t_PFC_remote_shape,8,'b'),title('PFC Shape Ensemble', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 subplot(6,1,4)
 spy( t_PFC_remote_ori,8,'b'),title('PFC Ori Ensemble', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 subplot(6,1,5)
 spy( t_MD_shape,8,'k'),title('MD shape', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 subplot(6,1,6)
 spy( t_MD_ori,8,'k'),title('MD ori', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 
 figure(7)
 subplot(2,1,1)
 spy( y_FS_inh_ori>-50,8,'b'),title('FS inh ori ', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 subplot(2,1,2)
 spy( y_FS_inh_shape>-50,8,'r'),title('FS inh shape cells', 'FontSize', 16)
-set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 t_final/dt]);%,xlabel('time')
+set(gca,'DataAspectRatio',[1000 1 1]),ylabel('Neuron ID', 'FontSize',16), xlim([0 end_time]);%,xlabel('time')
 
 
 %%

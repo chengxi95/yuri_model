@@ -27,6 +27,11 @@ va_ori_index = get_tuned_neuron_index(full_VA_ori, total_trial_num, numberofneur
 md_shape_index = get_tuned_neuron_index(full_MD_shape, total_trial_num, numberofneurons);
 md_ori_index = get_tuned_neuron_index(full_MD_ori, total_trial_num, numberofneurons);
 
+full_tuned_index = {pfc_s_bt_index; pfc_s_rc_index; pfc_s_gc_index; pfc_s_yt_index; 
+                    pfc_d_bt_index; pfc_d_rc_index; pfc_d_gc_index; pfc_d_yt_index;
+                    pfc_shape_index; pfc_ori_index; va_shape_index; va_ori_index;
+                    md_shape_index; md_ori_index};
+
 
 for i = 1:total_trial_num
     
@@ -135,7 +140,7 @@ for i = 1:total_trial_num
     if ~isnan(temp)        
         indexs = (temp(:, 2) - 1) * numberofneurons + temp(:, 1);
         one_md_shape(indexs) = 1;
-        one_md_shpae = one_md_shape(md_shape_index, :);
+        one_md_shape = one_md_shape(md_shape_index, :);
     end   
 
     temp = full_MD_ori{i};
@@ -145,19 +150,14 @@ for i = 1:total_trial_num
         one_md_ori = one_md_ori(md_ori_index, :);
     end
     
-    full_VA_num(i, :) =  get_firing_num(cat(1, one_va_shape, one_va_ori), gauss_width);
-    full_MD_num(i, :) = get_firing_num(cat(1, one_md_shape, one_md_ori), gauss_width);
-    full_PFC_num(i, :) = get_firing_num(cat(1, one_pfc_s_bt, one_pfc_s_rc, one_pfc_s_gc, one_pfc_s_yt, one_pfc_d_bt, one_pfc_d_rc, one_pfc_d_gc, one_pfc_d_yt, one_pfc_shape, one_pfc_ori), gauss_width);
+    full_VA_num(i, :) =  conv_gaussian(sum(cat(1, one_va_shape, one_va_ori), 1), srate, gauss_width);
+    full_MD_num(i, :) = conv_gaussian(sum(cat(1, one_md_shape, one_md_ori), 1), srate, gauss_width);
+    full_PFC_num(i, :) = conv_gaussian(sum(cat(1, one_pfc_s_bt, one_pfc_s_rc, one_pfc_s_gc, one_pfc_s_yt, one_pfc_d_bt, one_pfc_d_rc, one_pfc_d_gc, one_pfc_d_yt, one_pfc_shape, one_pfc_ori), 1), srate, gauss_width);
 end
 
-average_VA_num = sum(full_VA_num, 1);
-VA_firing_rate_timeseries=  conv_gaussian(average_VA_num, srate,gauss_width);
-
-average_MD_num = sum(full_MD_num, 1);
-MD_firing_rate_timeseries=  conv_gaussian(average_MD_num, srate,gauss_width);
-
-average_PFC_num = sum(full_PFC_num, 1);
-PFC_firing_rate_timeseries=  conv_gaussian(average_PFC_num, srate,gauss_width);
+VA_firing_rate_timeseries=  get_firing_num(full_VA_num, gauss_width);
+MD_firing_rate_timeseries=  get_firing_num(full_MD_num, gauss_width);
+PFC_firing_rate_timeseries=  get_firing_num(full_PFC_num, gauss_width);
 
 
 figure(2)

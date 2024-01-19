@@ -9,7 +9,7 @@ function success_ratio = get_success_ratio(full_PFC, minimum_cell_num, minimum_p
         window_size = 100;
         minimum_cell_num = 20;
         minimum_peak_count = 4;
-        trial_num = 200;
+        trial_num = 100;
     end
     success_count = 0;
     total_count = 0;
