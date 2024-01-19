@@ -1,5 +1,6 @@
 function neuron_index_list = get_tuned_neuron_index(firing_index_time, trial_num, numberofneurons, base_start, base_end, test_start, test_end)
-%UNTITLED2 Summary of this function goes here
+% get index of the cells that are tuned, the cells are tuned if they fires
+% much more often after stimulation (larger than mean+2*std)
 %   Detailed explanation goes here
     if nargin < 7
         base_start = 100000;

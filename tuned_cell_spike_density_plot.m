@@ -1,3 +1,5 @@
+% plot the spike density function for the all the tuned cells
+
 %   Simulation time
 dt = 0.01; %step size ms
 t_final = 4000; %simulation time ms
