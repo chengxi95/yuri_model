@@ -9,4 +9,10 @@
 
 
 ## Testing and plotting script
-`tuned_cell_spike_density_plot.m` is used to plot the spike density function for all the tuned cells. Simply load the saved simulation data (by double click the .mat file) then run `tuned_cell_spike_density_plot.m`
+- `yuri_model_data_generate_fixed_initial.m` also contains script to generate rater plot for certain neuron across all the trials or certain trial across all the neurons. You can change *neuron_id* in cell 3 and *trial_num* in cell 4 and run the corresponding cell to get the raster plot.
+
+- `tuned_cell_spike_density_plot.m` is used to plot the spike density function for all the tuned cells. Simply load the saved simulation data (by double click the saved .mat file) then run `tuned_cell_spike_density_plot.m`
+
+- `print_success_trial_ratio.m` is used to get the ratio of a successful trial in the saved data, a trial is considered successful if number of peak in testing is greater than the number of peak in
+the baseline by at least 4 (default). And only if 20 cells (default) fires within 1ms (default) will be considered a peak. Currently this
+script is only used on PFC ensemble. The rule of thumb is that if the stimulation type is blue triangle or red circle, the success_ratio for full_PFC_shape_ensemble is large while for full_PFC_ori_ensemble is low and vice versa. Simply laod the saved simulation data (by double click the saved .mat file) then run `print_success_trial_ratio`

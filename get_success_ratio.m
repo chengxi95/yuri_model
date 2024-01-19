@@ -1,4 +1,10 @@
 function success_ratio = get_success_ratio(full_PFC, minimum_cell_num, minimum_peak_count, window_size, trial_num)
+    % calculate the ratio of a success trial, a trial is considered success if
+    % number of peak in testing is greater than the number of peak in
+    % baseline by at least #minimum_peak_count. And only if #minimum_cell_num
+    % fires within #window_size will be considered a peak. Currently this
+    % script is only used for PFC ensemble
+
     if nargin < 5
         numberofneurons = 50;
         base_start = 100000;
