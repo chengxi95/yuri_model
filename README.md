@@ -16,3 +16,5 @@
 - `print_success_trial_ratio.m` is used to get the ratio of a successful trial in the saved data, a trial is considered successful if number of peak in testing is greater than the number of peak in
 the baseline by at least 4 (default). And only if 20 cells (default) fires within 1ms (default) will be considered a peak. Currently this
 script is only used on PFC ensemble. The rule of thumb is that if the stimulation type is blue triangle or red circle, the success_ratio for full_PFC_shape_ensemble is large while for full_PFC_ori_ensemble is low and vice versa. Simply laod the saved simulation data (by double click the saved .mat file) then run `print_success_trial_ratio`
+
+- `calculate_si_all_cells.m` is used to get the selectivity index (SI) of all the cells in the saved data. The SI is defined in the paper. By default, it assumes the stimulatation is presented at 200000 bin (2s), the baseline is from 1s-2s and the testing is from 2s-3s. The window size is 0.1s and it only uses two rules (shape or orientation, n = 2). Choose the set of data you want to use by commenting out other bc_files, gc_files, rc_files, yt_files and run the script. 
