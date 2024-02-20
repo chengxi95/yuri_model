@@ -9,7 +9,9 @@
 
 
 ## Testing and plotting script
-- `yuri_model_data_generate_fixed_initial.m` also contains script to generate rater plot for certain neuron across all the trials or certain trial across all the neurons. You can change *neuron_id* in cell 3 and *trial_num* in cell 4 and run the corresponding cell to get the raster plot.
+- `raster_single_neuron_across_trials.m` generate rater plot for certain neuron across all the trials. You can change *neuron_id* to get the raster plot.
+  
+- `raster_single_trial_across_all_neurons.m` generate rater plot for certain trial across all the neurons. You can change *trial_num* to get the raster plot.
 
 - `tuned_cell_spike_density_plot.m` is used to plot the spike density function for all the tuned cells. Simply load the saved simulation data (by double click the saved .mat file) then run `tuned_cell_spike_density_plot.m`
 
