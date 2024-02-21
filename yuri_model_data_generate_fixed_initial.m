@@ -19,7 +19,6 @@ SNPR_off = 0;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 tha = 20; % time constant 
-fs_strength = 0.5;
  
 % simulation time
 dt = 0.01; %step size ms
@@ -137,9 +136,9 @@ Matrix_PFC_to_MD (:, :)=1;
 % Excitatory and inhibitory cell connectivity = localy, no long distance inhibitory connection, inhibition only local within population
 W_IPL_Inh_to_exc = 0.001;
 W_IPL_Inh_to_exc_pv = 0.01;
-W_IPL_Inh_to_exc_fs= 0.005;
+W_IPL_Inh_to_exc_fs= 0.0025;
 
-W_VA_exi = 0.005;
+W_VA_exi = 0.01;
 W_MD_inh = 0.0005;
 
 % placeholder for multi trials results (first neuron of the section are saved)
@@ -325,7 +324,7 @@ for rr= 1:total_trial_num
        %%%%%% Midle layer (l = 1) to superficial layer (l = 2) %%%%%%%%%%%%
 
         Isyn_PFC_M_S(:,i+ delay) = Isyn_PFC_M_S(:,i+ delay) + sum(((i-last_spike_PFC_M < spikewidth) & (i-last_spike_PFC_M > 0)) .* matrix_M, 1).';
-        
+            
         if stimulation_type == 1
             Isyn_PFC_M_BT(:, i+delay) = Isyn_PFC_M_S(:,i+ delay);
         elseif stimulation_type == 2
@@ -429,9 +428,9 @@ for rr= 1:total_trial_num
 
         Isyn_VA_Matrix_to_PFC(sum(((i-last_spike_VA_matrix_Orientation<spikewidth_VA) & (i-last_spike_VA_matrix_Orientation>0)) .* matrix_MD_to_Crtex, 1)~=0,i+ delay) = Matrix_amplification;% modulatory efect of VA that goes to superficial + rule selective ensembles orientation 
         
-        Isyn_VA_Matrix_to_PFC_exc_shape(:,i+ delay) = Isyn_VA_Matrix_to_PFC_exc_shape(:,i+ delay) +  2*W_VA_exi .* sum(((i-last_spike_VA_matrix_shape<spikewidth) & (i-last_spike_VA_matrix_shape>0) & (matrix_VA_to_rule ~= 0)), 1).';% driving current from VA to rule selective cells (shape) 
+        Isyn_VA_Matrix_to_PFC_exc_shape(:,i+ delay) = Isyn_VA_Matrix_to_PFC_exc_shape(:,i+ delay) +  W_VA_exi .* sum(((i-last_spike_VA_matrix_shape<spikewidth) & (i-last_spike_VA_matrix_shape>0) & (matrix_VA_to_rule ~= 0)), 1).';% driving current from VA to rule selective cells (shape) 
         
-        Isyn_VA_Matrix_to_PFC_exc_orientation(:,i+ delay) = Isyn_VA_Matrix_to_PFC_exc_orientation(:,i+ delay) +  2*W_VA_exi .* sum(((i-last_spike_VA_matrix_Orientation<spikewidth) & (i-last_spike_VA_matrix_Orientation>0) & (matrix_VA_to_rule ~= 0)), 1).';% driving current from VA to rule selective cells (orientation)
+        Isyn_VA_Matrix_to_PFC_exc_orientation(:,i+ delay) = Isyn_VA_Matrix_to_PFC_exc_orientation(:,i+ delay) +  W_VA_exi .* sum(((i-last_spike_VA_matrix_Orientation<spikewidth) & (i-last_spike_VA_matrix_Orientation>0) & (matrix_VA_to_rule ~= 0)), 1).';% driving current from VA to rule selective cells (orientation)
 
         % VA to Inh 
 
@@ -492,9 +491,9 @@ for rr= 1:total_trial_num
 
         Isyn_MD_ori_to_Inh(:,i+ delay) = Isyn_MD_ori_to_Inh(:,i+ delay) + W_MD_inh .* sum(((i-last_spike_MD_ori<spikewidth_VA) & (i-last_spike_MD_ori>0)), 1).';
 
-        Isyn_FS_shape(:, i + delay) =  Isyn_FS_shape(:, i + delay) + fs_strength * W_IPL_Inh_to_exc_fs.*sum(((i-last_spike_FS_shape < spikewidth_inh_FS) & (i-last_spike_FS_shape > 0)).*(exp(((i-last_spike_FS_shape < spikewidth_inh_FS) & (i-last_spike_FS_shape > 0)).*(1-(i-last_spike_FS_shape-delay)).*2./spikewidth_inh_FS)), 1);
+        Isyn_FS_shape(:, i + delay) =  Isyn_FS_shape(:, i + delay) + W_IPL_Inh_to_exc_fs.*sum(((i-last_spike_FS_shape < spikewidth_inh_FS) & (i-last_spike_FS_shape > 0)).*(exp(((i-last_spike_FS_shape < spikewidth_inh_FS) & (i-last_spike_FS_shape > 0)).*(1-(i-last_spike_FS_shape-delay)).*2./spikewidth_inh_FS)), 1);
 
-        Isyn_FS_ori(:, i + delay) =  Isyn_FS_ori(:, i + delay) + fs_strength * W_IPL_Inh_to_exc_fs.*sum(((i-last_spike_FS_ori < spikewidth_inh_FS) & (i-last_spike_FS_ori > 0)).*(exp(((i-last_spike_FS_ori < spikewidth_inh_FS) & (i-last_spike_FS_ori > 0)).*(1-(i-last_spike_FS_ori-delay)).*2./spikewidth_inh_FS)), 1);
+        Isyn_FS_ori(:, i + delay) =  Isyn_FS_ori(:, i + delay) + W_IPL_Inh_to_exc_fs.*sum(((i-last_spike_FS_ori < spikewidth_inh_FS) & (i-last_spike_FS_ori > 0)).*(exp(((i-last_spike_FS_ori < spikewidth_inh_FS) & (i-last_spike_FS_ori > 0)).*(1-(i-last_spike_FS_ori-delay)).*2./spikewidth_inh_FS)), 1);
         
         %%%%%%%%%%% local excitatory input to shape cells %%%%%%%%%%%%%%%%%
                 
