@@ -5,7 +5,7 @@ close all;
 
 numberofneurons = 50;% number of neurons per group
 initialization = 0; % whether randomize the initialization (must load an initialization file if set to 0)
-total_trial_num = 200; % total number of trials 
+total_trial_num = 5; % total number of trials 
 stimulation_type = 1; % Stimulation type 1:BT, 2:RC, 3:GC, 4:YT
 
 % lesion test
@@ -96,7 +96,7 @@ Matrix_DPFC_to_MD(:, 1:15)=1 ;
 % PFC Deep to VA cells
 W_PFC_TH =  0.015;
 PFC_VA_matrix = zeros(numberofneurons,numberofneurons);
-PFC_VA_matrix(1: 20, 1:numberofneurons) = W_PFC_TH;
+PFC_VA_matrix(1: 20, 1:numberofneurons) = 1;
 
 % PFC Deep to STR
 W_PFC_to_str= 0.0145;
