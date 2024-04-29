@@ -5,7 +5,7 @@ close all;
 
 numberofneurons = 50;% number of neurons per group
 initialization = 0; % whether randomize the initialization (must load an initialization file if set to 0)
-total_trial_num = 5; % total number of trials 
+total_trial_num = 1; % total number of trials 
 stimulation_type = 1; % Stimulation type 1:BT, 2:RC, 3:GC, 4:YT
 
 % lesion test
@@ -83,10 +83,10 @@ end
 matrix_local_S_D(1:10, 1:10) = 2*W_S_D;
 
 % weights from superficial layer to the deep layer across difference chains
-W11=2; W12=0.2; W13=0.2; W14= 0.2;
-W21=0.2; W22=2; W23=0.2; W24= 0.2;
-W31=0.2; W32=0.2; W33=2; W34= 0.2;
-W41=0.2; W42=0.2; W43=0.2; W44= 2;
+W11=2; W12=0.8; W13=0.2; W14= 0.2;
+W21=0.8; W22=2; W23=0.2; W24= 0.2;
+W31=0.2; W32=0.2; W33=2; W34= 0.8;
+W41=0.2; W42=0.2; W43=0.8; W44= 2;
 
 % PFC deep cells to MD cells
 W_PFC_MD= 0.0006;
@@ -160,6 +160,10 @@ full_MD_ori = {};
 
 full_PFC_shape_ensemble = {};
 full_PFC_ori_ensemble = {};
+
+if ~initialization
+    load("initialization.mat")
+end
 
 for rr= 1:total_trial_num
     
@@ -1096,7 +1100,7 @@ for rr= 1:total_trial_num
         
 end
  
-save("spike_time_healthy_bt", ...
+save("spike_time_temp", ...
     'full_PFC_S_BT', ...
     'full_PFC_S_RC', ...
     'full_PFC_S_GC', ...
